@@ -1,10 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/video_card_root"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#424242">
 
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:background="@android:color/transparent"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <com.google.android.material.circularreveal.CircularRevealRelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.utils.widget.ImageFilterView
+                android:id="@+id/video_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/sample_thumbnail" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/video_title"
+                android:layout_marginTop="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/video_thumbnail"
+                android:layout_marginBottom="@dimen/paddingTop"
+                android:fontFamily="@font/baloo"
+                android:maxLines="1"
+                android:text="Video title goes here"
+                android:textColor="#F4F4F4"
+                android:textSize="18sp" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/video_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/video_title"
+                android:layout_marginBottom="@dimen/paddingTop"
+                android:fontFamily="@font/inder"
+                android:maxLines="3"
+                android:text="Here is going will dummy description of what is going on. we will show the input string here... this is the way we will cover. Okay If it is exceed more than three lines the the line will never be showed."
+                android:textColor="#F4F4F4"
+                android:textSize="14sp" />
+
+
+        </com.google.android.material.circularreveal.CircularRevealRelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
