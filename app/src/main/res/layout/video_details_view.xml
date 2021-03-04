@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#132025">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <com.google.android.material.circularreveal.CircularRevealRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/video_view_layout_padding">
+
+
+            <com.google.android.material.circularreveal.CircularRevealRelativeLayout
+                android:id="@+id/video_details_main_images_root_relative"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/video_details_main_imageview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/sample_thumbnail" />
+
+
+
+
+
+                <ImageView
+                    android:id="@+id/video_details_main_thumbnailview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_baseline_play_arrow_24" />
+
+            </com.google.android.material.circularreveal.CircularRevealRelativeLayout>
+
+
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/video_details_main_titleview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/video_details_main_images_root_relative"
+                android:layout_marginTop="@dimen/paddingTop"
+                android:layout_marginBottom="@dimen/paddingTop"
+                android:fontFamily="@font/baloo"
+
+                android:text="How to train your puppy."
+                android:textColor="#F5F8F8"
+                android:textSize="18sp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/video_details_main_titleview"
+                android:fontFamily="@font/inder"
+                android:text="Like babies, puppies do best on a regular schedule. The schedule teaches them that there are times to eat, times to play and times to do their business. Generally speaking, a puppy can control their bladder one hour for every month of age. So if your puppy is two months old, they can hold it for about two hours. Don't go longer than this between bathroom breaks or they’re guaranteed to have an accident.
+
+Take your puppy outside frequently—at least every two hours—and immediately after they wake up, during and after playing, and after eating or drinking.
+
+Pick a bathroom spot outside, and always take your puppy (on a leash) to that spot. While your puppy is relieving themselves, use a specific word or phrase that you can eventually use before they go to remind them what to do. Take them out for a longer walk or some playtime only after they have eliminated.
+
+Reward your puppy every time they eliminate outdoors. Praise or give treats—but remember to do so immediately after they’ve finished, not after they come back inside. This step is vital, because rewarding your dog for going outdoors is the only way to teach what's expected of them. Before rewarding, be sure they’re finished. Puppies are easily distracted and if you praise too soon, they may forget to finish until they’re back in the house."
+                android:textColor="#FBFBFB" />
+        </com.google.android.material.circularreveal.CircularRevealRelativeLayout>
+
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

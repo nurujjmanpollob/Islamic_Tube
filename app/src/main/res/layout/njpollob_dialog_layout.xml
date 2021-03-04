@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.circularreveal.CircularRevealRelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="260dp"
+	android:layout_height="300dp"
+	android:background="#1E1F20"
+	android:orientation="vertical">
+
+	<pl.droidsonroids.gif.GifImageView
+		android:id="@+id/dialog_imageview"
+		android:layout_width="match_parent"
+		android:layout_height="170dp"
+		android:padding="10dp"
+		android:scaleType="fitXY"
+		android:src="@drawable/splash_screen_logo" />
+
+	<ScrollView
+		android:layout_width="wrap_content"
+		android:layout_below="@+id/dialog_imageview"
+		android:layout_height="wrap_content">
+
+		<com.google.android.material.textview.MaterialTextView
+			android:id="@+id/dialog_txt"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="10dp"
+			android:maxLines="4"
+			android:fontFamily="@font/inder"
+			android:text="@string/this_is_dummy_textview_domenstrating_building_custom_dialog_layout"
+			android:textColor="@android:color/white"
+			android:textSize="15sp"
+			android:textStyle="normal" />
+
+	</ScrollView>
+
+	<com.google.android.material.circularreveal.CircularRevealLinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="40dp"
+		android:layout_alignParentBottom="true"
+		android:layout_centerInParent="true"
+
+		android:background="#1E2020"
+		android:orientation="horizontal">
+
+
+		<androidx.appcompat.widget.AppCompatButton
+			android:id="@+id/dialog_btn_yes"
+			android:layout_width="130dp"
+			android:layout_height="wrap_content"
+
+
+			android:background="@android:color/transparent"
+			android:text="@string/view"
+			android:textColor="#5DBCD2"
+			android:textStyle="bold" />
+
+		<androidx.appcompat.widget.AppCompatButton
+			android:id="@+id/dialog_btn_no"
+			android:layout_width="130dp"
+			android:layout_height="wrap_content"
+			android:background="@android:color/transparent"
+			android:text="@string/download"
+			android:textColor="#5DBCD2"
+			android:textStyle="bold" />
+
+
+	</com.google.android.material.circularreveal.CircularRevealLinearLayout>
+</com.google.android.material.circularreveal.CircularRevealRelativeLayout>
+
+
