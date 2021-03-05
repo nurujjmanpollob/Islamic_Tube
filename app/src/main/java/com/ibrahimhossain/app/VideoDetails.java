@@ -340,6 +340,8 @@ public class VideoDetails extends AppCompatActivity {
 
               
                 dialog.show();
+
+                return result;
             }
 
 
@@ -370,9 +372,9 @@ public class VideoDetails extends AppCompatActivity {
 
             dialog.show();
 
+            return result;
 
         }
-        
-        return result;
+
     }
 }
