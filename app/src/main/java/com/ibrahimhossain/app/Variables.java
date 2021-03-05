@@ -75,6 +75,12 @@ public class Variables {
     //Video details author image link
     public static String VIDEO_DETAILS_AUTHOR_AVATAR = "avatarurl";
 
+    //Video details thumbnail url
+    public static String VIDEO_DETAILS_THUMBNAIL = "thumbnail";
+
+    //Video details intent
+    public static String VIDEO_DETAILS_INTENT_KEY = "urltobepassed";
+
 
 
 }

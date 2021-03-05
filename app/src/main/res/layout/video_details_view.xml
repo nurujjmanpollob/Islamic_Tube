@@ -46,7 +46,7 @@
 
 
                 <pl.droidsonroids.gif.GifImageView
-                    android:id="@+id/video_details_main_imageview"
+                    android:id="@+id/video_details_main_thumbnailview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:src="@drawable/sample_thumbnail" />
@@ -54,7 +54,7 @@
 
 
                 <androidx.constraintlayout.utils.widget.ImageFilterView
-                    android:id="@+id/video_details_main_thumbnailview"
+                    android:id="@+id/video_details_main_play_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"

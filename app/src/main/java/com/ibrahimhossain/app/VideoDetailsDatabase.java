@@ -18,6 +18,8 @@
 
 package com.ibrahimhossain.app;
 
+import androidx.annotation.NonNull;
+
 public class VideoDetailsDatabase {
 
     String authorName;
@@ -26,18 +28,32 @@ public class VideoDetailsDatabase {
     String videoDescription;
     String videoURL;
     String videoReferenceWebsite;
+    String videoThumbnail;
+
+    //Stats
+    Boolean isNotNull = true;
 
 
     //Create constructor parameter
-    public VideoDetailsDatabase(String videoTitle, String videoDescription, String authorName, String authorAvatarURL, String videoURL, String videoReferenceWebsite){
+
+    public VideoDetailsDatabase(@NonNull String videoTitle, @NonNull String videoDescription, @NonNull String authorName, @NonNull  String authorAvatarURL, @NonNull String videoURL, @NonNull String videoThumbnail, @NonNull String videoReferenceWebsite){
 
         this.videoTitle = videoTitle;
         this.videoDescription = videoDescription;
         this.authorName = authorName;
         this.authorAvatarURL = authorAvatarURL;
         this.videoURL = videoURL;
+        this.videoThumbnail = videoThumbnail;
         this.videoReferenceWebsite = videoReferenceWebsite;
     }
+
+    //Create empty constructor
+
+    public VideoDetailsDatabase(){
+
+        isNotNull = false;
+    }
+
 
 
     public void setAuthorAvatarURL(String authorAvatarURL) {
@@ -86,6 +102,19 @@ public class VideoDetailsDatabase {
 
     public void setVideoURL(String videoURL) {
         this.videoURL = videoURL;
+    }
+
+    public String getVideoThumbnail() {
+        return videoThumbnail;
+    }
+
+    public void setVideoThumbnail(String videoThumbnail) {
+        this.videoThumbnail = videoThumbnail;
+    }
+
+    public Boolean getIsNotNull(){
+
+        return isNotNull;
     }
 
 

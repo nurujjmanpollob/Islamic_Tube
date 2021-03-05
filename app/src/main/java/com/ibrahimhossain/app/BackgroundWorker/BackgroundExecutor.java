@@ -54,6 +54,7 @@ public class BackgroundExecutor implements Thread.UncaughtExceptionHandler
 
     }
 
+    @Deprecated
     public void requestDownThread(Object object){
 
 

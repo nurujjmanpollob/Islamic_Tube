@@ -50,6 +50,8 @@ public class NJPollobDialogLayout extends Dialog
 	int thumbnailResourceID = 0;
 	String leftButtonText;
 	String rightButtonText;
+
+	boolean cachePolicy = false;
 	
 	
 	public NJPollobDialogLayout(Context context){

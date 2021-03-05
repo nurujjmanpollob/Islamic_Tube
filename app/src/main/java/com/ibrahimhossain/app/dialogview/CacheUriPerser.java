@@ -61,7 +61,8 @@ public class CacheUriPerser
 	public void setUpResources(){
 		
 		if(imgviw != null){
-		
+
+
 			imgviw.setImageURI(Uri.fromFile(new File(cacheDR, file)));
 			
 		}
