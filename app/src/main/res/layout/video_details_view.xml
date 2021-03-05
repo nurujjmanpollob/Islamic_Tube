@@ -76,29 +76,23 @@
                     android:textSize="20sp" />
 
 
-
                 <androidx.constraintlayout.utils.widget.ImageFilterView
                     android:id="@+id/video_details_browse"
                     android:layout_width="24dp"
-
-                    android:layout_margin="@dimen/paddingTop"
-                    android:layout_toStartOf="@id/video_details_share"
-
                     android:layout_height="24dp"
-
                     android:layout_alignParentEnd="true"
+                    android:layout_marginStart="@dimen/paddingTop"
                     android:layout_centerVertical="true"
-
-
+                    android:layout_marginEnd="32dp"
+                    android:layout_toStartOf="@id/video_details_share"
                     android:src="@drawable/ic_baseline_internet_40" />
 
                 <androidx.constraintlayout.utils.widget.ImageFilterView
+                    android:id="@+id/video_details_share"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_toEndOf="@id/video_details_profile_name"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:id="@+id/video_details_share"
                     android:src="@drawable/ic_baseline_share_40" />
 
 
@@ -126,6 +120,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/video_details_main_descriptionview"
                 android:layout_below="@id/video_details_main_titleview"
                 android:fontFamily="@font/inder"
                 android:text="Like babies, puppies do best on a regular schedule. The schedule teaches them that there are times to eat, times to play and times to do their business. Generally speaking, a puppy can control their bladder one hour for every month of age. So if your puppy is two months old, they can hold it for about two hours. Don't go longer than this between bathroom breaks or they’re guaranteed to have an accident.
@@ -136,7 +131,14 @@ Pick a bathroom spot outside, and always take your puppy (on a leash) to that sp
 
 Reward your puppy every time they eliminate outdoors. Praise or give treats—but remember to do so immediately after they’ve finished, not after they come back inside. This step is vital, because rewarding your dog for going outdoors is the only way to teach what's expected of them. Before rewarding, be sure they’re finished. Puppies are easily distracted and if you praise too soon, they may forget to finish until they’re back in the house."
                 android:textColor="#FBFBFB" />
+
+
+
+
+
         </com.google.android.material.circularreveal.CircularRevealRelativeLayout>
+
+
 
     </ScrollView>
 
