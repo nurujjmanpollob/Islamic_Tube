@@ -23,11 +23,15 @@ package com.ibrahimhossain.app.dialogview;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.Window;
 
 import android.widget.TextView;
 
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 
 
@@ -52,8 +56,8 @@ public class NJPollobDialogLayout extends Dialog
 	String rightButtonText;
 
 	boolean cachePolicy = false;
-	
-	
+
+
 	public NJPollobDialogLayout(Context context){
 		super(context);
 		this.context = context;
@@ -81,8 +85,44 @@ public class NJPollobDialogLayout extends Dialog
 		descriptionView = findViewById(R.id.dialog_txt);
 		
 		if(thumbnailResourceID > 0){
-			
+
 			ImgSrcView.setImageResource(thumbnailResourceID);
+		}
+
+		if(thumbnailURL != null){
+
+			//lets run background worker
+
+			NJPollobDialogWorker worker = new NJPollobDialogWorker(context, cachePolicy, thumbnailURL);
+
+			worker.setEventListenerForTask(new NJPollobDialogWorker.ListenOnResourceLoadEvent(){
+
+				@Override
+				public void onLoadingResource()
+				{
+					ImgSrcView.setImageResource(R.drawable.loading_animation);
+				}
+
+				@Override
+				public void onSuccessfullyExecution(String cacheDir, String fileName)
+				{
+
+					ImgSrcView.setImageURI(new CacheUriPerser(cacheDir, fileName).ReturnWorkingUri());
+				}
+
+				@Override
+				public void onReceivedError(Exception exceptionToRead)
+				{
+
+
+				}
+
+
+
+			});
+
+
+			worker.runThread();
 		}
 		
 		if(description != null){
@@ -118,47 +158,18 @@ public class NJPollobDialogLayout extends Dialog
 		
 		
 	}
-	
+
+	@SuppressWarnings({"UnusedDeclaration"})
 	public void setThumbnailByURL(String url, Boolean isUseCacheStrategy){
-	
-	//lets run background worker 😂
-		
-	NJPollobDialogWorker worker = new NJPollobDialogWorker(context, isUseCacheStrategy, url);
-
-		worker.setEventListenerForTask(new NJPollobDialogWorker.ListenOnResourceLoadEvent(){
-
-				@Override
-				public void onLoadingResource()
-				{
-					ImgSrcView.setImageResource(R.drawable.loading_animation);
-				}
-
-				@Override
-				public void onSuccessfullyExecution(String cacheDir, String fileName)
-				{
-				
-					ImgSrcView.setImageURI(new CacheUriPerser(cacheDir, fileName).ReturnWorkingUri());
-				}
-
-				@Override
-				public void onReceivedError(Exception exceptionToRead)
-				{
-				
-
-				}
-				
-		
-		
-	});
 
 
-		worker.runThread();
+		this.thumbnailURL = url;
+		this.cachePolicy = isUseCacheStrategy;
 		
 	}
-	
-	public void setThumbnailByResource(int resourceID){
-		
-		ImgSrcView.setImageResource(resourceID);
+
+	public void setThumbnailByResource(@NonNull Integer resourceID){
+
 		this.thumbnailResourceID = resourceID;
 		
 	}

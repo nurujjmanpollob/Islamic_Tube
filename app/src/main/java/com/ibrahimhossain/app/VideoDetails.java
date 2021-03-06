@@ -19,8 +19,12 @@
 
 package com.ibrahimhossain.app;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.URLUtil;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -138,7 +142,7 @@ public class VideoDetails extends AppCompatActivity {
                     //Create alertDialog saying that actual error happened
                     NJPollobDialogLayout dialog = new NJPollobDialogLayout(VideoDetails.this);
                     dialog.setDialogDescription("The database is not found, usually because of no internet connection.");
-                    dialog.setThumbnailByResource(R.drawable.error_500);
+                    dialog.setThumbnailByResource(R.drawable.error_404);
                     dialog.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
                         @Override
                         public void onLeftButtonClick(View view) {
@@ -246,7 +250,7 @@ public class VideoDetails extends AppCompatActivity {
                 //Create alertDialog saying that actual error happened
                 NJPollobDialogLayout dialog = new NJPollobDialogLayout(VideoDetails.this);
                 dialog.setDialogDescription(cause);
-                dialog.setThumbnailByResource(R.drawable.error_500);
+                dialog.setThumbnailByResource(R.drawable.error_404);
                 dialog.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
                     @Override
                     public void onLeftButtonClick(View view) {
@@ -269,6 +273,65 @@ public class VideoDetails extends AppCompatActivity {
 
         //Run the background thread
         requestMaker.runThread();
+
+
+
+        //React on websiteView
+        websiteView.setOnClickListener(v -> {
+            try {
+                if (URLUtil.isValidUrl(database.getVideoReferenceWebsite())) {
+                    Intent i = new Intent(VideoDetails.this, WebReferenceLoader.class);
+                    i.putExtra(Variables.WEB_REFERENCE_INTENT_KEY, database.getVideoReferenceWebsite());
+                    startActivity(i);
+                }else {
+
+                    Toast.makeText(VideoDetails.this, "This URL is invalid", Toast.LENGTH_LONG).show();
+
+                }
+            }catch (Exception exc){
+
+
+                //Create alertDialog saying that actual error happened
+                NJPollobDialogLayout dialog = new NJPollobDialogLayout(VideoDetails.this);
+                dialog.setDialogDescription(exc.toString());
+                dialog.setThumbnailByResource(R.drawable.error_404);
+                dialog.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+                    @Override
+                    public void onLeftButtonClick(View view) {
+
+                    }
+
+                    @Override
+                    public void onRightButtonClick(View view) {
+
+                        dialog.dismiss();
+
+                    }
+                });
+
+
+                dialog.show();
+
+            }
+        });
+
+
+
+        //React on Share Button
+        shareButton.setOnClickListener(v -> {
+            try{
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse(database.getVideoURL()), "video/*");
+                startActivity(intent);
+
+
+            }catch (Exception ess){
+
+                Toast.makeText(VideoDetails.this, "This video cant be shared!", Toast.LENGTH_LONG).show();
+
+            }
+        });
 
 
         super.onCreate(savedInstanceState);
@@ -323,7 +386,7 @@ public class VideoDetails extends AppCompatActivity {
                 //Create alertDialog saying that actual error happened
                 NJPollobDialogLayout dialog = new NJPollobDialogLayout(VideoDetails.this);
                 dialog.setDialogDescription(exception.toString());
-                dialog.setThumbnailByResource(R.drawable.error_500);
+                dialog.setThumbnailByResource(R.drawable.error_404);
                 dialog.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
                     @Override
                     public void onLeftButtonClick(View view) {
@@ -354,7 +417,7 @@ public class VideoDetails extends AppCompatActivity {
             //Create alertDialog saying that actual error happened
             NJPollobDialogLayout dialog = new NJPollobDialogLayout(VideoDetails.this);
             dialog.setDialogDescription(exception.toString());
-            dialog.setThumbnailByResource(R.drawable.error_500);
+            dialog.setThumbnailByResource(R.drawable.error_404);
             dialog.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
                 @Override
                 public void onLeftButtonClick(View view) {

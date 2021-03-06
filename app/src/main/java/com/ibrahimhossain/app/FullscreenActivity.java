@@ -98,7 +98,7 @@ public class FullscreenActivity extends AppCompatActivity {
                     @Override
                     public void onLeftButtonClick(View view) {
 
-                        startActivity(new Intent(FullscreenActivity.this, VideoPlayerView.class));
+                        startActivity(new Intent(FullscreenActivity.this, VideoDetails.class));
 
                     }
 

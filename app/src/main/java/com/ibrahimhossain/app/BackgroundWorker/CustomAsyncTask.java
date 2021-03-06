@@ -30,29 +30,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-
-public abstract class CustomAsyncTask<Progress, Result>
-{
+public abstract class CustomAsyncTask<Progress, Result> {
     int numOfThreads = 1;
-
-
-
     static ExecutorService exc;
 
 
 
-    static Looper looper;
-
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @MainThread
-
     public void runThread(){
 
-
-        looper = Looper.myLooper();
-
         preExecute();
-     //   System.out.println("Starting, "+numOfThreads+" Thread Combination in one task");
 
         if(numOfThreads > 0 && numOfThreads <= 8){
 
@@ -60,21 +48,11 @@ public abstract class CustomAsyncTask<Progress, Result>
             exc.execute(() -> {
 
                 Looper.prepare();
-                Result result= doBackgroundTask();
-
-                onTaskFinished(result);
-
-
-
+                onTaskFinished(doBackgroundTask());
                 Looper.loop();
 
-
-
-
-
-
-
             });
+
 
 
 
@@ -91,6 +69,7 @@ public abstract class CustomAsyncTask<Progress, Result>
     @WorkerThread
     protected  abstract Result doBackgroundTask();
 
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     protected void onTaskFinished(Result result) {
 
@@ -98,12 +77,13 @@ public abstract class CustomAsyncTask<Progress, Result>
 
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     @MainThread
     public void defineThreadCount(int numOfThread){
-
         this.numOfThreads = numOfThread;
     }
 
+    @Deprecated
     @MainThread
     public static void cancalWork(){
 
@@ -112,15 +92,19 @@ public abstract class CustomAsyncTask<Progress, Result>
     }
 
 
-    @SafeVarargs
     @MainThread
+    @SafeVarargs
+
+    @SuppressWarnings({"UnusedDeclaration"})
     protected final void onProgressUpdated(Progress... progress){
 
     }
 
 
+
+    @SuppressWarnings({"UnusedDeclaration"})
     @SafeVarargs
-    @WorkerThread
+    @MainThread
     protected final void publishProgress(Progress... values) {
 
         onProgressUpdated(values);

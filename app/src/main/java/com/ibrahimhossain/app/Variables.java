@@ -81,6 +81,11 @@ public class Variables {
     //Video details intent
     public static String VIDEO_DETAILS_INTENT_KEY = "urltobepassed";
 
+    //Web Reference Loader intent key
+    public static String WEB_REFERENCE_INTENT_KEY = "webintent";
+
+    //START Search engine URL for WebView Activity
+    public static String SEARCH_ENGINE_URL_GOOGLE = "https://www.google.com/search?q=";
 
 
 }
