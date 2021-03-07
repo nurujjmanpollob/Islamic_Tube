@@ -35,6 +35,7 @@ import androidx.constraintlayout.utils.widget.ImageFilterView;
 
 import com.google.android.material.circularreveal.CircularRevealRelativeLayout;
 import com.google.android.material.textview.MaterialTextView;
+import com.ibrahimhossain.app.BackgroundWorker.IsValidYoutubeURL;
 import com.ibrahimhossain.app.BackgroundWorker.WebRequestMaker;
 import com.ibrahimhossain.app.dialogview.CacheUriPerser;
 import com.ibrahimhossain.app.dialogview.NJPollobDialogLayout;
@@ -347,6 +348,35 @@ public class VideoDetails extends AppCompatActivity {
                 Toast.makeText(VideoDetails.this, "This video cant be shared!", Toast.LENGTH_LONG).show();
 
             }
+        });
+
+        //React on play button or thumbnail view
+        thumbnailViewRootRelative.setOnClickListener(v -> {
+
+            IsValidYoutubeURL videoURLS = new IsValidYoutubeURL(database.getVideoURL());
+            videoURLS.setListenerForURLEvent(new IsValidYoutubeURL.ListenerOnURLEvent() {
+                @Override
+                public void invalidURL() {
+                    Toast.makeText(VideoDetails.this, "this url is invalid", Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void regularVideo(String videoURL) {
+
+                    Intent i = new Intent(VideoDetails.this, VideoPlayerView.class);
+                    i.putExtra(Variables.VIDEO_INTENT_KEY, videoURL);
+                    startActivity(i);
+
+                }
+
+                @Override
+                public void youtubeVideoKey(String key) {
+
+                    //Will implement this later.
+
+                }
+            });
+
         });
 
 
