@@ -27,6 +27,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="noActionBar" parent="Theme.AppCompat.Light.NoActionBar" />
+
 
 
     <style name="FullscreenTheme" parent="AppTheme">

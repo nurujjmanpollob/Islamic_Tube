@@ -22,8 +22,10 @@ package com.ibrahimhossain.app;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.View;
 import android.webkit.URLUtil;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -81,6 +83,12 @@ public class VideoDetails extends AppCompatActivity {
     //Create progress drawable;
     KProgressHUD kProgressHUD;
 
+    // Error View
+    View errorView;
+
+    //Main ScrollView
+    ScrollView mainView;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,6 +104,8 @@ public class VideoDetails extends AppCompatActivity {
         websiteView = findViewById(R.id.video_details_browse);
         videoTitleView = findViewById(R.id.video_details_main_titleview);
         videoDescriptionView = findViewById(R.id.video_details_main_descriptionview);
+        errorView = findViewById(R.id.video_details_main_error_view);
+        mainView = findViewById(R.id.video_details_view_main_root_scrollview);
 
         //Check for intent data that passed from previous Activity
         if(getIntent().hasExtra(Variables.VIDEO_DETAILS_INTENT_KEY)){
@@ -138,6 +148,9 @@ public class VideoDetails extends AppCompatActivity {
                     if (kProgressHUD.isShowing()) {
                         kProgressHUD.dismiss();
                     }
+
+                    errorView.setVisibility(View.VISIBLE);
+                    mainView.setVisibility(View.GONE);
 
                     //Create alertDialog saying that actual error happened
                     NJPollobDialogLayout dialog = new NJPollobDialogLayout(VideoDetails.this);
@@ -245,6 +258,9 @@ public class VideoDetails extends AppCompatActivity {
                 if (kProgressHUD.isShowing()) {
                     kProgressHUD.dismiss();
                 }
+
+                errorView.setVisibility(View.VISIBLE);
+                mainView.setVisibility(View.GONE);
 
 
                 //Create alertDialog saying that actual error happened
@@ -383,6 +399,9 @@ public class VideoDetails extends AppCompatActivity {
                     kProgressHUD.dismiss();
                 }
 
+                errorView.setVisibility(View.VISIBLE);
+                mainView.setVisibility(View.GONE);
+
                 //Create alertDialog saying that actual error happened
                 NJPollobDialogLayout dialog = new NJPollobDialogLayout(VideoDetails.this);
                 dialog.setDialogDescription(exception.toString());
@@ -414,6 +433,9 @@ public class VideoDetails extends AppCompatActivity {
                 kProgressHUD.dismiss();
             }
 
+            errorView.setVisibility(View.VISIBLE);
+            mainView.setVisibility(View.GONE);
+
             //Create alertDialog saying that actual error happened
             NJPollobDialogLayout dialog = new NJPollobDialogLayout(VideoDetails.this);
             dialog.setDialogDescription(exception.toString());
@@ -439,5 +461,16 @@ public class VideoDetails extends AppCompatActivity {
 
         }
 
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 }

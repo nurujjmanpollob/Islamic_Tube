@@ -64,9 +64,12 @@
 
         <activity android:name=".MainActivty" />
         <activity android:name=".VideoPlayerView"
-            android:configChanges="keyboardHidden|orientation"/>
+            android:theme="@style/noActionBar"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
 
-        <activity android:name=".VideoDetails" />
+        <activity android:name=".VideoDetails"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/noActionBar"/>
 
     </application>
 

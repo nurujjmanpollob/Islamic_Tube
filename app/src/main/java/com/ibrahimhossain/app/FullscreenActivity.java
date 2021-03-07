@@ -36,7 +36,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.ibrahimhossain.app.WebRequestMaker.CheckConnection;
 import com.ibrahimhossain.app.dialogview.NJPollobDialogLayout;
 
 import java.util.Objects;
@@ -85,39 +84,36 @@ public class FullscreenActivity extends AppCompatActivity {
 
         //Run basic connectivity check
 
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void run() {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
 
 
 
-                NJPollobDialogLayout njPollobDialogLayout = new NJPollobDialogLayout(FullscreenActivity.this);
-                njPollobDialogLayout.setDialogDescription("There are test is now going :) Tap yes to run this app!");
-                njPollobDialogLayout.setListenerOnDialogButtonClick("Run", "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
-                    @Override
-                    public void onLeftButtonClick(View view) {
+            NJPollobDialogLayout njPollobDialogLayout = new NJPollobDialogLayout(FullscreenActivity.this);
+            njPollobDialogLayout.setDialogDescription("There are test is now going :) Tap yes to run this app!");
+            njPollobDialogLayout.setListenerOnDialogButtonClick("Run", "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+                @Override
+                public void onLeftButtonClick(View view) {
 
-                        startActivity(new Intent(FullscreenActivity.this, VideoDetails.class));
+                    startActivity(new Intent(FullscreenActivity.this, VideoDetails.class));
 
-                    }
 
-                    @Override
-                    public void onRightButtonClick(View view) {
+                }
 
-                        Snackbar sb = Snackbar.make(constraintLayout, "You pressed Close button", 5000);
-                        sb.show();
+                @Override
+                public void onRightButtonClick(View view) {
 
-                    }
-                });
+                    Snackbar sb = Snackbar.make(constraintLayout, "You pressed Close button", 5000);
+                    sb.show();
 
-                njPollobDialogLayout.show();
+                }
+            });
 
+            njPollobDialogLayout.show();
 
 
 
 
-            }
+
         }, 2200);
 
 

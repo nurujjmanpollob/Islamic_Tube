@@ -23,14 +23,9 @@ package com.ibrahimhossain.app.dialogview;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+
 import android.view.View;
 import android.view.Window;
-
-import android.widget.TextView;
-
-import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 
@@ -56,6 +51,8 @@ public class NJPollobDialogLayout extends Dialog
 	String rightButtonText;
 
 	boolean cachePolicy = false;
+
+	Boolean isDismiss = false;
 
 
 	public NJPollobDialogLayout(Context context){
@@ -204,12 +201,25 @@ public class NJPollobDialogLayout extends Dialog
 	}
 	
 	private void callOnRightClick(View vw){
+		isDismiss = true;
+		dismiss();
 		this.buttonClickListener.onRightButtonClick(vw);
 	}
 	
 	private void callOnLeftClick(View vw){
-		
+
+		isDismiss = true;
+
+		dismiss();
 		this.buttonClickListener.onLeftButtonClick(vw);
 	}
-	
+
+
+	@Override
+	public void dismiss() {
+
+		if(!isDismiss){
+			super.dismiss();
+		}
+	}
 }

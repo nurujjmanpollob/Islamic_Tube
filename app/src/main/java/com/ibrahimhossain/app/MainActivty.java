@@ -19,17 +19,17 @@
 
 package com.ibrahimhossain.app;
 
-import android.annotation.SuppressLint;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 
@@ -38,7 +38,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ibrahimhossain.app.BackgroundWorker.ThreadFixer;
 import com.ibrahimhossain.app.BackgroundWorker.WebRequestMaker;
 import com.ibrahimhossain.app.WebRequestMaker.VideoAdapter;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -61,7 +60,7 @@ public class MainActivty extends AppCompatActivity {
 
     private KProgressHUD progressHUD;
 
-    AppCompatTextView errorTxt;
+    View errorTxt;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -125,24 +124,22 @@ public class MainActivty extends AppCompatActivity {
 
 
                 Handler h = new Handler(Looper.getMainLooper());
-                h.post(new Runnable() {
-                    @Override
-                    public void run() {
+                h.post(() -> {
 
-                        //Set Layout manager
-                        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivty.this));
+                    //Set Layout manager
+                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivty.this));
 
-                        //Call new instance of video adapter
-                        VideoAdapter adapter = new VideoAdapter(MainActivty.this, getAllJsonData(result));
+                    //Call new instance of video adapter
+                    VideoAdapter adapter = new VideoAdapter(MainActivty.this, getAllJsonData(result));
 
-                        //set recyclerview adapter
-                        recyclerView.setAdapter(adapter);
+                    //set recyclerview adapter
+                    recyclerView.setAdapter(adapter);
 
-                    }
                 });
 
-
+                if(progressHUD.isShowing()) {
                     progressHUD.dismiss();
+                }
 
 
 
@@ -152,7 +149,9 @@ public class MainActivty extends AppCompatActivity {
             @Override
             public void onLoadFailed(String cause) {
 
-                        progressHUD.dismiss();
+                if(progressHUD.isShowing()) {
+                    progressHUD.dismiss();
+                }
 
                         errorTxt.setVisibility(View.VISIBLE);
 
@@ -217,7 +216,9 @@ public class MainActivty extends AppCompatActivity {
                         Log.d(Variables.VIDEO_LOG_TAG, exception.toString());
 
                         errorTxt.setVisibility(View.VISIBLE);
-                                progressHUD.dismiss();
+                        if(progressHUD.isShowing()) {
+                            progressHUD.dismiss();
+                        }
 
 
                         return videoData;
@@ -234,7 +235,9 @@ public class MainActivty extends AppCompatActivity {
 
                 Toast.makeText(MainActivty.this, "It is appears that no database installed", Toast.LENGTH_LONG).show();
 
-                progressHUD.dismiss();
+                if(progressHUD.isShowing()) {
+                    progressHUD.dismiss();
+                }
 
                 errorTxt.setVisibility(View.VISIBLE);
 
@@ -250,7 +253,9 @@ public class MainActivty extends AppCompatActivity {
 
             errorTxt.setVisibility(View.VISIBLE);
 
-                    progressHUD.dismiss();
+            if(progressHUD.isShowing()) {
+                progressHUD.dismiss();
+            }
 
 
             videoData.add(new VideoData("Top level Error!", "Please contact the developer.", null, null));
@@ -259,7 +264,19 @@ public class MainActivty extends AppCompatActivity {
         return videoData;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public KProgressHUD getProgressHUD() {
         return progressHUD;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 }

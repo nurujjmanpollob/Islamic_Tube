@@ -24,6 +24,7 @@ import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -96,19 +97,9 @@ public class VideoPlayerView extends AppCompatActivity {
 
 
         // set up gesture listeners
-        mScaleGestureDetector = new ScaleGestureDetector(this, (ScaleGestureDetector.OnScaleGestureListener) new MyScaleGestureListener());
-        mGestureDetector = new GestureDetector(this, (GestureDetector.OnGestureListener) new MySimpleOnGestureListener());
+        mScaleGestureDetector = new ScaleGestureDetector(this, new MyScaleGestureListener());
+        mGestureDetector = new GestureDetector(this, new MySimpleOnGestureListener());
 
-        /*
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Loading Video from NJPS Entertainmemt Server");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            pDialog.create();
-        }
-        pDialog.show();
-        pDialog.setCancelable(false);
-
-         */
 
         kProgressHUD = new KProgressHUD(this);
         kProgressHUD.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
@@ -231,7 +222,9 @@ public class VideoPlayerView extends AppCompatActivity {
 
 
 
-                 kProgressHUD.dismiss();
+                    if(kProgressHUD.isShowing()) {
+                        kProgressHUD.dismiss();
+                    }
 
                     // Restore saved position, if available.
                     if (mCurrentPosition > 0) {
@@ -256,7 +249,10 @@ public class VideoPlayerView extends AppCompatActivity {
                 });
 
         mVideoPlayerView.setOnErrorListener((p1, p2, p3) -> {
-        kProgressHUD.dismiss();
+            if(kProgressHUD.isShowing()) {
+                kProgressHUD.dismiss();
+            }
+
 
             return false;
         });
@@ -384,7 +380,6 @@ public class VideoPlayerView extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
-
 
 
 

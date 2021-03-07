@@ -71,6 +71,7 @@ public abstract class CustomAsyncTask<Progress, Result> {
 
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    @MainThread
     protected void onTaskFinished(Result result) {
 
         exc.shutdown();
