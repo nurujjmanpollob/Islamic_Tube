@@ -20,6 +20,7 @@
 package com.ibrahimhossain.app;
 
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -35,6 +36,8 @@ import androidx.constraintlayout.utils.widget.ImageFilterView;
 
 import com.google.android.material.circularreveal.CircularRevealRelativeLayout;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.ibrahimhossain.app.BackgroundWorker.IsValidYoutubeURL;
 import com.ibrahimhossain.app.BackgroundWorker.WebRequestMaker;
 import com.ibrahimhossain.app.dialogview.CacheUriPerser;
@@ -44,6 +47,8 @@ import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import pl.droidsonroids.gif.GifImageView;
@@ -91,6 +96,12 @@ public class VideoDetails extends AppCompatActivity {
     ScrollView mainView;
 
 
+    //request mode
+
+    private static final int REQ_START_STANDALONE_PLAYER = 1;
+    private static final int REQ_RESOLVE_SERVICE_MISSING = 2;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         //inflate layout from xml
@@ -132,10 +143,6 @@ public class VideoDetails extends AppCompatActivity {
 
             }
 
-            @Override
-            public void onLoadingTask() {
-
-            }
 
             @Override
             public void onTaskFinished(String result) {
@@ -353,6 +360,7 @@ public class VideoDetails extends AppCompatActivity {
         //React on play button or thumbnail view
         thumbnailViewRootRelative.setOnClickListener(v -> {
 
+
             IsValidYoutubeURL videoURLS = new IsValidYoutubeURL(database.getVideoURL());
             videoURLS.setListenerForURLEvent(new IsValidYoutubeURL.ListenerOnURLEvent() {
                 @Override
@@ -372,10 +380,27 @@ public class VideoDetails extends AppCompatActivity {
                 @Override
                 public void youtubeVideoKey(String key) {
 
-                    //Will implement this later.
+
+
+                    Intent intent  = YouTubeStandalonePlayer.createVideoIntent(
+                            VideoDetails.this, Variables.YOUTUBE_PLAYER_DEVELOPER_KEY, key, 1000, true, false);
+
+                    if (intent != null) {
+                        if (canResolveIntent(intent)) {
+                            startActivityForResult(intent, REQ_START_STANDALONE_PLAYER);
+                        } else {
+                            // Could not resolve the intent - must need to install or update the YouTube API service.
+                            YouTubeInitializationResult.SERVICE_MISSING
+                                    .getErrorDialog(VideoDetails.this, REQ_RESOLVE_SERVICE_MISSING).show();
+                        }
+
+                    }
+
 
                 }
             });
+
+
 
         });
 
@@ -502,5 +527,28 @@ public class VideoDetails extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+
+        private boolean canResolveIntent(Intent intent) {
+            List<ResolveInfo> resolveInfo = getPackageManager().queryIntentActivities(intent, 0);
+            return !resolveInfo.isEmpty();
+        }
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_START_STANDALONE_PLAYER && resultCode != RESULT_OK) {
+            YouTubeInitializationResult errorReason =
+                    YouTubeStandalonePlayer.getReturnedInitializationResult(data);
+            if (errorReason.isUserRecoverableError()) {
+                errorReason.getErrorDialog(this, 0).show();
+            } else {
+
+                Toast.makeText(this, errorReason.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

@@ -20,6 +20,7 @@
 package com.ibrahimhossain.app.WebRequestMaker;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,19 +34,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textview.MaterialTextView;
 import com.ibrahimhossain.app.R;
+import com.ibrahimhossain.app.Variables;
 import com.ibrahimhossain.app.VideoData;
+import com.ibrahimhossain.app.VideoDetails;
 import com.ibrahimhossain.app.dialogview.CacheUriPerser;
 import com.ibrahimhossain.app.dialogview.NJPollobDialogWorker;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import pl.droidsonroids.gif.GifImageView;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapterView> {
 
   Context applicationContext;
-
   List<VideoData> videoData;
 
 
@@ -105,16 +104,22 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapter
         //Set description
         holder.videoDescriptionView.setText(videoData.get(position).getDescription());
 
-        //Get video url
-
-        String videoURL = videoData.get(position).getVideoURL();
-
         //Lets create some animation
 
         Animation animation = AnimationUtils.loadAnimation(applicationContext, R.anim.slide_in);
 
         //Set animation to root view
         holder.rootView.setAnimation(animation);
+
+
+        //React on thumbnail click
+        holder.thumbnailView.setOnClickListener(v -> {
+
+            Intent i = new Intent(applicationContext, VideoDetails.class);
+            i.putExtra(Variables.VIDEO_DETAILS_INTENT_KEY, videoData.get(position).getVideoURL());
+            applicationContext.startActivity(i);
+
+        });
 
 
 

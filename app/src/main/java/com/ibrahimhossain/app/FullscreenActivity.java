@@ -23,7 +23,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,9 +33,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-
 import com.google.android.material.snackbar.Snackbar;
+import com.ibrahimhossain.app.BackgroundWorker.InternetTester;
+import com.ibrahimhossain.app.BackgroundWorker.WebRequestMaker;
 import com.ibrahimhossain.app.dialogview.NJPollobDialogLayout;
+import com.kaopiz.kprogresshud.KProgressHUD;
 
 import java.util.Objects;
 
@@ -45,6 +46,15 @@ public class FullscreenActivity extends AppCompatActivity {
 
     ConstraintLayout constraintLayout;
     ImageFilterView imageFilterView;
+
+
+
+
+    //request mode
+
+    private static final int REQ_START_STANDALONE_PLAYER = 1;
+    private static final int REQ_RESOLVE_SERVICE_MISSING = 2;
+
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -84,33 +94,68 @@ public class FullscreenActivity extends AppCompatActivity {
 
         //Run basic connectivity check
 
+
+
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
 
 
 
-            NJPollobDialogLayout njPollobDialogLayout = new NJPollobDialogLayout(FullscreenActivity.this);
-            njPollobDialogLayout.setDialogDescription("There are test is now going :) Tap yes to run this app!");
-            njPollobDialogLayout.setListenerOnDialogButtonClick("Run", "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+           InternetTester requestMaker = new InternetTester(InternetTester.PING_GOOGLE_SERVER);
+            requestMaker.setPingListener(new InternetTester.OnPingEvent() {
+
+                KProgressHUD kProgressHUD;
+
                 @Override
-                public void onLeftButtonClick(View view) {
+                public void onPingRunning() {
+                    kProgressHUD  = new KProgressHUD(FullscreenActivity.this);
+                    kProgressHUD.setLabel("Pinging our server...");
+                    kProgressHUD.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
+                    kProgressHUD.setCancellable(false);
+                    kProgressHUD.show();
+                }
 
-                    startActivity(new Intent(FullscreenActivity.this, VideoDetails.class));
+                @Override
+                public void onPingSuccess() {
 
+
+                    if(kProgressHUD.isShowing()){
+
+                        kProgressHUD.dismiss();
+                    }
+
+                    FullscreenActivity.this.startActivity(new Intent(FullscreenActivity.this, MainActivty.class));
+
+                    FullscreenActivity.this.finish();
 
                 }
 
                 @Override
-                public void onRightButtonClick(View view) {
+                public void onPingFailed() {
 
-                    Snackbar sb = Snackbar.make(constraintLayout, "You pressed Close button", 5000);
-                    sb.show();
+                    NJPollobDialogLayout dialogLayout = new NJPollobDialogLayout(FullscreenActivity.this);
+                    dialogLayout.setThumbnailByResource(R.drawable.error_404);
+                    dialogLayout.setDialogDescription("It is appears that internet is not working. Please check your connection.");
+                    dialogLayout.setListenerOnDialogButtonClick("Close App", null, new NJPollobDialogLayout.DialogButtonClickListener() {
+                        @Override
+                        public void onLeftButtonClick(View view) {
+
+                            FullscreenActivity.this.finish();
+
+                        }
+
+                        @Override
+                        public void onRightButtonClick(View view) {
+
+                        }
+                    });
+
+                    dialogLayout.show();
 
                 }
+
+
             });
-
-            njPollobDialogLayout.show();
-
-
+            requestMaker.runThread();
 
 
 

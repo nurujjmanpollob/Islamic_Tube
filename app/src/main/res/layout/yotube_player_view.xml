@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~
   ~  Copyright 2021 Nurujjaman Pollob.
@@ -16,17 +17,18 @@
   ~
   -->
 
-<resources>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="#132025"
+    android:id="@+id/youtube_player_view_main_root"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
 
 
+    <com.google.android.youtube.player.YouTubePlayerView
+        android:id="@+id/youtube_player_view_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-    <string name="app_name">Islamic Tube</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="this_is_dummy_textview_domenstrating_building_custom_dialog_layout">This is dummy TextView domenstrating building custom dialog layout</string>
-    <string name="view">view</string>
-    <string name="download">download</string>
-    <string name="user_name">Nurujjaman Poolob</string>
-    <string name="no_database">It is appears that no database has been added</string>
-    <string name="error_player">Youtube Player Error</string>
-</resources>
+</androidx.appcompat.widget.LinearLayoutCompat>

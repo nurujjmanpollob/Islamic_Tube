@@ -16,7 +16,6 @@
  *
  */
 
-
 package com.ibrahimhossain.app.BackgroundWorker;
 
 import androidx.annotation.NonNull;
@@ -27,37 +26,32 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class WebRequestMaker extends CustomAsyncTask<Void, String> {
 
+@SuppressWarnings({"UnusedDeclaration"})
+public class InternetTester extends CustomAsyncTask<Void, String>{
 
+    OnPingEvent pingEvent;
+    Boolean isFailed = false;
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public static String PING_GOOGLE_SERVER = "https://www.google.com";
 
     String url;
-    int timeOut = 1500;
-    WebRequestEvent event;
 
-
-    public WebRequestMaker(@NonNull String url){
+    @SuppressWarnings({"UnusedDeclaration"})
+    public InternetTester(@NonNull String url) {
 
         this.url = url;
 
     }
 
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    public void setTimeOut(int timeOut) {
-        this.timeOut = timeOut;
-    }
-
     @Override
     protected void preExecute() {
 
+        if(pingEvent != null){
 
-
-            if (event != null) {
-                event.onStartExecuting();
-            }
-
-
+            pingEvent.onPingRunning();
+        }
         super.preExecute();
     }
 
@@ -75,7 +69,7 @@ public class WebRequestMaker extends CustomAsyncTask<Void, String> {
             connct.setDoInput(true);
 
             connct.setRequestMethod("GET");
-            connct.setReadTimeout(timeOut);
+            connct.setReadTimeout(1500);
 
             int response = connct.getResponseCode();
 
@@ -96,51 +90,55 @@ public class WebRequestMaker extends CustomAsyncTask<Void, String> {
         {
 
 
-                if(event != null) {
-                    event.onLoadFailed(e.toString());
+            if(pingEvent != null) {
+               pingEvent.onPingFailed();
 
             }
 
+            isFailed = true;
             return null;
         }
 
         return result.toString();
-    }
 
+    }
 
     @Override
     protected void onTaskFinished(String s) {
 
+        if(s != null){
+            if(pingEvent != null){
 
+                pingEvent.onPingSuccess();
+            }
+        }else {
 
-            if (s != null ){
+            if (!isFailed){
 
-                    if(event != null) {
-                        event.onTaskFinished(s);
-
-
+                if (pingEvent != null){
+                    pingEvent.onPingFailed();
                 }
+            }
         }
-
         super.onTaskFinished(s);
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
+    public interface OnPingEvent{
 
-    public interface WebRequestEvent{
+        void onPingRunning();
+        void onPingSuccess();
+        void onPingFailed();
 
-        void onStartExecuting();
-         void onTaskFinished(String result);
-         void onLoadFailed(String cause);
+
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
+    public void setPingListener(OnPingEvent pingEvent){
 
+        this.pingEvent = pingEvent;
 
-    public void setEventListener(WebRequestEvent eventListener){
-
-        this.event = eventListener;
     }
-
-
 
 
 }

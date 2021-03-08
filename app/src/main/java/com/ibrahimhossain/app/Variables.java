@@ -87,5 +87,16 @@ public class Variables {
     //START Search engine URL for WebView Activity
     public static String SEARCH_ENGINE_URL_GOOGLE = "https://www.google.com/search?q=";
 
+    //Youtube Player Developer Key
+    /**
+     * Please replace this with a valid API key which is enabled for the
+     * YouTube Data API v3 service. Go to the
+     * <a href="https://console.developers.google.com/">Google Developers Console</a>
+     * to register a new developer key.
+     */
+    public static String YOUTUBE_PLAYER_DEVELOPER_KEY = "AIzaSyBxtJsi6MyUPK7Kcf_Y76xh5LWL2XYpym8";
+
+    public static final String DEVELOPER_KEY ="AIzaSyBwI9fsT9RSgm7fZP-lTbp1NXqmD2xYtUI";
+
 
 }

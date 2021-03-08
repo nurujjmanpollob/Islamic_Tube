@@ -71,6 +71,9 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/noActionBar"/>
 
+        <activity android:name=".YotubeVideoPlayer"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+
     </application>
 
 </manifest>

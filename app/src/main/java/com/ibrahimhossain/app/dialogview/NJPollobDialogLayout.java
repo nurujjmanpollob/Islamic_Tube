@@ -201,25 +201,17 @@ public class NJPollobDialogLayout extends Dialog
 	}
 	
 	private void callOnRightClick(View vw){
-		isDismiss = true;
-		dismiss();
+
 		this.buttonClickListener.onRightButtonClick(vw);
+		dismiss();
 	}
 	
 	private void callOnLeftClick(View vw){
 
-		isDismiss = true;
-
-		dismiss();
 		this.buttonClickListener.onLeftButtonClick(vw);
+		dismiss();
 	}
 
 
-	@Override
-	public void dismiss() {
 
-		if(!isDismiss){
-			super.dismiss();
-		}
-	}
 }

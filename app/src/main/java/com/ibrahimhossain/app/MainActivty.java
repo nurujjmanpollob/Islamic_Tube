@@ -104,25 +104,14 @@ public class MainActivty extends AppCompatActivity {
             }
 
             @Override
-            public void onLoadingTask() {
-
-            }
-
-            @Override
             public void onTaskFinished(String result) {
-
-
-
                 //Our call is now successful, lets parse all json data
-
                 //We are using custom threads(by default a newly created thread) that doesn't
                 // Run onUIThread, and If you going to update current views that not created by Thread we have used
                 //To do the separated task, we will get CalledFromWrongThreadException
                 //Separated thread help us greatly improve performance in multi core processor
                 //Without slowing the UI
                 // So using ThreadFixer with current main Thread instance would simply fix this exception
-
-
                 Handler h = new Handler(Looper.getMainLooper());
                 h.post(() -> {
 
@@ -153,7 +142,7 @@ public class MainActivty extends AppCompatActivity {
                     progressHUD.dismiss();
                 }
 
-                        errorTxt.setVisibility(View.VISIBLE);
+         errorTxt.setVisibility(View.VISIBLE);
 
 
 
@@ -264,10 +253,7 @@ public class MainActivty extends AppCompatActivity {
         return videoData;
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    public KProgressHUD getProgressHUD() {
-        return progressHUD;
-    }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
