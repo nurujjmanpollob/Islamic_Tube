@@ -36,7 +36,12 @@ public class WebRequestMaker extends CustomAsyncTask<Void, String> {
     WebRequestEvent event;
 
 
-    public WebRequestMaker(@NonNull String url){
+    StringBuilder result;
+
+    Boolean isExceptionThrow;
+
+
+    public WebRequestMaker(String url){
 
         this.url = url;
 
@@ -51,12 +56,9 @@ public class WebRequestMaker extends CustomAsyncTask<Void, String> {
     @Override
     protected void preExecute() {
 
-
-
-            if (event != null) {
-                event.onStartExecuting();
-            }
-
+        if(event != null) {
+            event.onStartExecuting();
+        }
 
         super.preExecute();
     }
@@ -65,7 +67,9 @@ public class WebRequestMaker extends CustomAsyncTask<Void, String> {
     protected String doBackgroundTask() {
 
 
-        StringBuilder result = new StringBuilder();
+        result = new StringBuilder();
+
+
         try
         {
             URL urls = new URL(url);
@@ -73,7 +77,6 @@ public class WebRequestMaker extends CustomAsyncTask<Void, String> {
             HttpURLConnection connct = (HttpURLConnection) urls.openConnection();
 
             connct.setDoInput(true);
-
             connct.setRequestMethod("GET");
             connct.setReadTimeout(timeOut);
 
@@ -84,7 +87,8 @@ public class WebRequestMaker extends CustomAsyncTask<Void, String> {
                 InputStream is = connct.getInputStream();
                 BufferedReader bfr = new BufferedReader(new InputStreamReader(is));
                 String line;
-                while((line = bfr.readLine()) != null){
+
+                while(( line = bfr.readLine()) != null){
 
                     result.append(line);
                     result.append("\n");
@@ -92,15 +96,11 @@ public class WebRequestMaker extends CustomAsyncTask<Void, String> {
             }
 
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
 
-
-                if(event != null) {
-                    event.onLoadFailed(e.toString());
-
+            if(event != null) {
+                event.onLoadFailed(e.toString());
             }
-
             return null;
         }
 
@@ -112,14 +112,8 @@ public class WebRequestMaker extends CustomAsyncTask<Void, String> {
     protected void onTaskFinished(String s) {
 
 
-
-            if (s != null ){
-
-                    if(event != null) {
-                        event.onTaskFinished(s);
-
-
-                }
+        if(event != null && s != null) {
+            event.onTaskFinished(s);
         }
 
         super.onTaskFinished(s);
@@ -138,6 +132,7 @@ public class WebRequestMaker extends CustomAsyncTask<Void, String> {
     public void setEventListener(WebRequestEvent eventListener){
 
         this.event = eventListener;
+
     }
 
 

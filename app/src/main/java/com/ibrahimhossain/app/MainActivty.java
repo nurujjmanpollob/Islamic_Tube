@@ -21,14 +21,9 @@ package com.ibrahimhossain.app;
 
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.PersistableBundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
@@ -38,7 +33,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ibrahimhossain.app.BackgroundWorker.WebRequestMaker;
 import com.ibrahimhossain.app.WebRequestMaker.VideoAdapter;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
@@ -58,9 +52,14 @@ public class MainActivty extends AppCompatActivity {
     CircleImageView profileImageView;
     AppCompatTextView titleView;
 
-    private KProgressHUD progressHUD;
+   KProgressHUD progressHUD;
 
     View errorTxt;
+
+
+    //Add database instance
+    List<VideoData> input = new ArrayList<>();
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,8 +74,6 @@ public class MainActivty extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-
-
         setContentView(R.layout.activity_main);
 
 
@@ -87,171 +84,26 @@ public class MainActivty extends AppCompatActivity {
         recyclerView = findViewById(R.id.main_recycler_view);
         errorTxt = findViewById(R.id.main_error_text_view);
 
+        if(getIntent().hasExtra(Variables.VIDEO_INTENT_KEY)){
 
-
-        // This helper class will help to load json easily and provides various callbacks
-
-        WebRequestMaker webRequestMaker = new WebRequestMaker(Variables.HOME_JSON_URL);
-        webRequestMaker.setEventListener(new WebRequestMaker.WebRequestEvent() {
-            @Override
-            public void onStartExecuting() {
-
-                progressHUD = new KProgressHUD(MainActivty.this);
-                progressHUD.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
-                progressHUD.setLabel("Loading");
-                progressHUD.show();
-
-            }
-
-            @Override
-            public void onTaskFinished(String result) {
-                //Our call is now successful, lets parse all json data
-                //We are using custom threads(by default a newly created thread) that doesn't
-                // Run onUIThread, and If you going to update current views that not created by Thread we have used
-                //To do the separated task, we will get CalledFromWrongThreadException
-                //Separated thread help us greatly improve performance in multi core processor
-                //Without slowing the UI
-                // So using ThreadFixer with current main Thread instance would simply fix this exception
-                Handler h = new Handler(Looper.getMainLooper());
-                h.post(() -> {
-
-                    //Set Layout manager
-                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivty.this));
-
-                    //Call new instance of video adapter
-                    VideoAdapter adapter = new VideoAdapter(MainActivty.this, getAllJsonData(result));
-
-                    //set recyclerview adapter
-                    recyclerView.setAdapter(adapter);
-
-                });
-
-                if(progressHUD.isShowing()) {
-                    progressHUD.dismiss();
-                }
-
-
-
-            }
-
-
-            @Override
-            public void onLoadFailed(String cause) {
-
-                if(progressHUD.isShowing()) {
-                    progressHUD.dismiss();
-                }
-
-         errorTxt.setVisibility(View.VISIBLE);
-
-
-
-            }
-        });
-
-        webRequestMaker.runThread();
-
-    }
-
-
-    private List<VideoData> getAllJsonData(String input){
-
-        //Add database instance
-        List<VideoData> videoData = new ArrayList<>();
-
-
-        if(input != null){
-
-
-
-            //Start try catch statement for whole array
-
-            try{
-
-                //Create a new instance of object and later on we will fetch elements by Array
-                JSONObject jsonObject = new JSONObject(input);
-
-                //Get the object root
-                JSONArray jsonArray = jsonObject.getJSONArray(Variables.VIDEO_JSON_ROOT);
-
-                //get length of database
-                int dataLength = jsonArray.length();
-
-                //Lets run loop and get single data from database
-                for(int i = 0; i < dataLength; i++){
-
-                    //get single node from array
-                    JSONObject node = jsonArray.getJSONObject(i);
-
-                    //Again try / catch block to ensure the application will never crash, and this is all for debugging purpose
-                    try {
-                        //Get video title
-                        String videoTitle = node.getString(Variables.VIDEO_JSON_TITLE);
-
-                        //Get video description
-                        String videoDescription = node.getString(Variables.VIDEO_JSON_DESCRIPTION);
-
-                        //Get thumbnail url
-                        String videoThumbnail = node.getString(Variables.VIDEO_JSON_THUMBNAIL);
-
-                        //Get Video URL
-                        String videoURL = node.getString(Variables.VIDEO_JSON_URL);
-
-                        //add title description etc to database
-                        videoData.add(new VideoData(videoTitle, videoDescription, videoURL, videoThumbnail));
-
-                    }catch (Exception exception){
-
-                        Log.d(Variables.VIDEO_LOG_TAG, exception.toString());
-
-                        errorTxt.setVisibility(View.VISIBLE);
-                        if(progressHUD.isShowing()) {
-                            progressHUD.dismiss();
-                        }
-
-
-                        return videoData;
-
-                    }
-                }
-
-
-
-
-            }catch (Exception exception){
-
-                Log.d(Variables.VIDEO_LOG_TAG, exception.toString());
-
-                Toast.makeText(MainActivty.this, "It is appears that no database installed", Toast.LENGTH_LONG).show();
-
-                if(progressHUD.isShowing()) {
-                    progressHUD.dismiss();
-                }
-
-                errorTxt.setVisibility(View.VISIBLE);
-
-
-
-            }
-
-        }else {
-
-            Log.d(Variables.VIDEO_LOG_TAG, "The coding glitch happened! Sorry for this inconvenience");
-
-
-
-            errorTxt.setVisibility(View.VISIBLE);
-
-            if(progressHUD.isShowing()) {
-                progressHUD.dismiss();
-            }
-
-
-            videoData.add(new VideoData("Top level Error!", "Please contact the developer.", null, null));
-
+            input = getIntent().getParcelableArrayListExtra(Variables.VIDEO_INTENT_KEY);
         }
-        return videoData;
+
+        //Set Layout manager
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivty.this));
+
+
+        //Call new instance of video adapter
+        VideoAdapter adapter = new VideoAdapter(MainActivty.this, input);
+
+        //set recyclerview adapter
+        recyclerView.setAdapter(adapter);
+
+
+
+
     }
+
 
 
 

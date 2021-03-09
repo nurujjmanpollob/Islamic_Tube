@@ -18,9 +18,12 @@
 
 package com.ibrahimhossain.app;
 
-import androidx.annotation.NonNull;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class VideoDetailsDatabase {
+
+@SuppressWarnings({"UnusedDeclaration"})
+public class VideoDetailsDatabase implements Parcelable {
 
     String authorName;
     String authorAvatarURL;
@@ -36,7 +39,7 @@ public class VideoDetailsDatabase {
 
     //Create constructor parameter
 
-    public VideoDetailsDatabase(@NonNull String videoTitle, @NonNull String videoDescription, @NonNull String authorName, @NonNull  String authorAvatarURL, @NonNull String videoURL, @NonNull String videoThumbnail, @NonNull String videoReferenceWebsite){
+    public VideoDetailsDatabase(String videoTitle, String videoDescription, String authorName, String authorAvatarURL, String videoURL, String videoThumbnail, String videoReferenceWebsite){
 
         this.videoTitle = videoTitle;
         this.videoDescription = videoDescription;
@@ -55,6 +58,29 @@ public class VideoDetailsDatabase {
     }
 
 
+    protected VideoDetailsDatabase(Parcel in) {
+        authorName = in.readString();
+        authorAvatarURL = in.readString();
+        videoTitle = in.readString();
+        videoDescription = in.readString();
+        videoURL = in.readString();
+        videoReferenceWebsite = in.readString();
+        videoThumbnail = in.readString();
+        byte tmpIsNotNull = in.readByte();
+        isNotNull = tmpIsNotNull == 0 ? null : tmpIsNotNull == 1;
+    }
+
+    public static final Creator<VideoDetailsDatabase> CREATOR = new Creator<VideoDetailsDatabase>() {
+        @Override
+        public VideoDetailsDatabase createFromParcel(Parcel in) {
+            return new VideoDetailsDatabase(in);
+        }
+
+        @Override
+        public VideoDetailsDatabase[] newArray(int size) {
+            return new VideoDetailsDatabase[size];
+        }
+    };
 
     public void setAuthorAvatarURL(String authorAvatarURL) {
         this.authorAvatarURL = authorAvatarURL;
@@ -118,4 +144,20 @@ public class VideoDetailsDatabase {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(authorName);
+        dest.writeString(authorAvatarURL);
+        dest.writeString(videoTitle);
+        dest.writeString(videoDescription);
+        dest.writeString(videoURL);
+        dest.writeString(videoReferenceWebsite);
+        dest.writeString(videoThumbnail);
+        dest.writeByte((byte) (isNotNull == null ? 0 : isNotNull ? 1 : 2));
+    }
 }

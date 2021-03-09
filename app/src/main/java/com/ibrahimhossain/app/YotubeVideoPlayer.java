@@ -37,7 +37,6 @@ public class YotubeVideoPlayer extends YoutubeAPIActivity implements YouTubePlay
 
     private static final int PORTRAIT_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
 
-    private LinearLayoutCompat baseLayout;
     private YouTubePlayerView playerView;
     private YouTubePlayer player;
 
@@ -46,7 +45,7 @@ public class YotubeVideoPlayer extends YoutubeAPIActivity implements YouTubePlay
     protected void onCreate(Bundle bundle) {
         setContentView(R.layout.yotube_player_view);
 
-        baseLayout = findViewById(R.id.youtube_player_view_main_root);
+        LinearLayoutCompat baseLayout = findViewById(R.id.youtube_player_view_main_root);
         playerView = findViewById(R.id.youtube_player_view_main);
 
         //Initialize the player

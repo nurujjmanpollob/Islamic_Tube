@@ -19,7 +19,12 @@
 
 package com.ibrahimhossain.app;
 
-public class VideoData {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+
+
+public class VideoData implements Parcelable {
 
     String title, desc, vdourl, thumbnail;
 
@@ -34,6 +39,38 @@ public class VideoData {
 
 
     }
+
+    protected VideoData(Parcel in) {
+        title = in.readString();
+        desc = in.readString();
+        vdourl = in.readString();
+        thumbnail = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(desc);
+        dest.writeString(vdourl);
+        dest.writeString(thumbnail);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<VideoData> CREATOR = new Creator<VideoData>() {
+        @Override
+        public VideoData createFromParcel(Parcel in) {
+            return new VideoData(in);
+        }
+
+        @Override
+        public VideoData[] newArray(int size) {
+            return new VideoData[size];
+        }
+    };
 
     public String getDescription() {
         return desc;

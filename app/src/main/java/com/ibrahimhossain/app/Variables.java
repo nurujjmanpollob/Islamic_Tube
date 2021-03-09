@@ -22,8 +22,10 @@ package com.ibrahimhossain.app;
 public class Variables {
 
     //Home page URL here
-    public static String HOME_JSON_URL = "https://www.google.com";
+    public static String HOME_JSON_URL = "https://czfwcsuly76rj93arzijfg-on.drv.tw/www.deeplearningsolution.com/itubedatabase/maindatabase.json";
 
+    //Pass home page data
+    public static String HOME_INPUT_JSON = "inputjson";
     //Profile url here
     public static  String USER_PROFILE_DETAILS = "url must be starts from http or https";
 

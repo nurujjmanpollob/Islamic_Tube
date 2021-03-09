@@ -21,6 +21,8 @@ package com.ibrahimhossain.app.WebRequestMaker;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,12 +35,19 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textview.MaterialTextView;
+import com.ibrahimhossain.app.BackgroundWorker.InternetImageLoader;
+import com.ibrahimhossain.app.BackgroundWorker.JSONParser;
+import com.ibrahimhossain.app.BackgroundWorker.WebRequestMaker;
+import com.ibrahimhossain.app.FullscreenActivity;
+import com.ibrahimhossain.app.MainActivty;
 import com.ibrahimhossain.app.R;
 import com.ibrahimhossain.app.Variables;
 import com.ibrahimhossain.app.VideoData;
 import com.ibrahimhossain.app.VideoDetails;
-import com.ibrahimhossain.app.dialogview.CacheUriPerser;
-import com.ibrahimhossain.app.dialogview.NJPollobDialogWorker;
+import com.ibrahimhossain.app.VideoDetailsDatabase;
+import com.kaopiz.kprogresshud.KProgressHUD;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -70,33 +79,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapter
     public void onBindViewHolder(@NonNull VideoAdapterView holder, int position) {
 
 
-        //Get thumbnail url and set Image thumbnail
-        NJPollobDialogWorker worker = new NJPollobDialogWorker(applicationContext, false, videoData.get(position).getThumbnailURL());
-
-        worker.runThread();
-
-        worker.setEventListenerForTask(new NJPollobDialogWorker.ListenOnResourceLoadEvent() {
-            @Override
-            public void onLoadingResource() {
-
-
-
-            }
-
-            @Override
-            public void onSuccessfullyExecution(String cacheDir, String fileName) {
-
-                holder.thumbnailView.setImageURI(new CacheUriPerser(cacheDir, fileName).ReturnWorkingUri());
-
-            }
-
-            @Override
-            public void onReceivedError(Exception exceptionToRead) {
-
-            }
-        });
-
-
+        new InternetImageLoader(videoData.get(position).getThumbnailURL(), R.drawable.error_404, holder.thumbnailView, applicationContext).runThread();
 
         //set title
         holder.videoTitleView.setText(videoData.get(position).getTitle());
@@ -115,9 +98,91 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapter
         //React on thumbnail click
         holder.thumbnailView.setOnClickListener(v -> {
 
+            WebRequestMaker requestMaker = new WebRequestMaker(videoData.get(position).getVideoURL());
+            requestMaker.setEventListener(new WebRequestMaker.WebRequestEvent() {
+
+                KProgressHUD kProgressHUD;
+
+                @Override
+                public void onStartExecuting() {
+
+                    kProgressHUD = new KProgressHUD(applicationContext);
+                    kProgressHUD.setCancellable(false);
+                    kProgressHUD.setLabel("Getting Video Information...");
+                    kProgressHUD.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
+                    kProgressHUD.show();
+
+                }
+
+                @Override
+                public void onTaskFinished(String result) {
+
+
+                    if(kProgressHUD.isShowing()){
+                        kProgressHUD.dismiss();
+                    }
+
+                    JSONParser.VideoDetailsParser videoDetailsParser = new JSONParser.VideoDetailsParser();
+                    videoDetailsParser.ModeVideoDetailsDatabase(Variables.VIDEO_DETAILS_JSON_ROOT, result);
+                    videoDetailsParser.setListenerForVideoDetailsDatabase(new JSONParser.VideoDetailsParser.VideoDetailsDatabaseListener() {
+                        @Override
+                        public void onNullValueOrInput() {
+
+                            System.out.println("No internet or database.");
+
+                        }
+
+                        @Override
+                        public void onArrayNotFound(String cause) {
+
+                            System.out.println("ArrayNotFound: "+cause);
+
+                        }
+
+                        @Override
+                        public void onSingleObjectNotFound(String cause) {
+
+                            System.out.println("SingleObjectNotFound: "+cause);
+
+                        }
+
+                        @Override
+                        public void onSuccessfulData(VideoDetailsDatabase videoDetailsDatabase) {
+
+                            Intent intent = new Intent(applicationContext, VideoDetails.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable(Variables.VIDEO_DETAILS_INTENT_KEY,videoDetailsDatabase);
+                            intent.putExtras(bundle);
+                           applicationContext.startActivity(intent);
+
+
+                        }
+                    });
+
+                    videoDetailsParser.parseVideoDatabaseForResult();
+
+                }
+
+                @Override
+                public void onLoadFailed(String cause) {
+
+
+                    if(kProgressHUD.isShowing()){
+                        kProgressHUD.dismiss();
+                    }
+
+                }
+            });
+
+            requestMaker.runThread();
+
+            /*
+
             Intent i = new Intent(applicationContext, VideoDetails.class);
             i.putExtra(Variables.VIDEO_DETAILS_INTENT_KEY, videoData.get(position).getVideoURL());
             applicationContext.startActivity(i);
+
+             */
 
         });
 

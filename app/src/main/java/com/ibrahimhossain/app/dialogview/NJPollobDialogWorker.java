@@ -41,7 +41,7 @@ public class NJPollobDialogWorker extends CustomAsyncTask<Void, String>
 	Context contextWrapper;
 	Boolean isUseCache;
 	String inputURL;
-	String filenameWithExtension = "njpollob.gif";
+	String filenameWithExtension = "njpollob";
 	
 	public NJPollobDialogWorker(Context context, Boolean flagForCache, String urlToProcess){
 		this.contextWrapper = context;
@@ -64,13 +64,16 @@ public class NJPollobDialogWorker extends CustomAsyncTask<Void, String>
 		
 		try
 		{
-			FileOutputStream output = new FileOutputStream(new File(cacheDirectory, filenameWithExtension));
+
+			File f = new File(cacheDirectory, filenameWithExtension);
+
+			FileOutputStream output = new FileOutputStream(f);
 			URL url = new URL(inputURL);
 			HttpURLConnection connction = (HttpURLConnection) url.openConnection();
 			InputStream InputStream = connction.getInputStream();
 			
 			byte[] buffer = new byte[1024];
-			int lenght = 0;
+			int lenght;
 			
 			while((lenght = InputStream.read(buffer)) > 0){
 				
@@ -128,6 +131,7 @@ public class NJPollobDialogWorker extends CustomAsyncTask<Void, String>
 
 				if(getFileSizeInBytes < 1024){
 					//file is null, let's run network operation
+					filenameWithExtension = filenameWithExtension+"1";
 					return	operateNetWorkOperation(cacheDIR);
 
 				}
@@ -136,6 +140,8 @@ public class NJPollobDialogWorker extends CustomAsyncTask<Void, String>
 			//file is not found!
 			else{
 
+				filenameWithExtension = filenameWithExtension+"1";
+
 				return operateNetWorkOperation(cacheDIR);
 			}
 
@@ -143,6 +149,12 @@ public class NJPollobDialogWorker extends CustomAsyncTask<Void, String>
 
 		if(!isUseCache){
 			//we are now running network opeation
+
+			File file = new File(cacheDIR, filenameWithExtension);
+			if(file.exists()){
+
+				filenameWithExtension = filenameWithExtension+"1";
+			}
 			return	operateNetWorkOperation(cacheDIR);
 		}
 
@@ -151,9 +163,9 @@ public class NJPollobDialogWorker extends CustomAsyncTask<Void, String>
 
 	public interface ListenOnResourceLoadEvent{
 		
-		public void onLoadingResource();
-		public void onSuccessfullyExecution(String cacheDir, String fileName);
-		public void onReceivedError(Exception exceptionToRead);
+		void onLoadingResource();
+		void onSuccessfullyExecution(String cacheDir, String fileName);
+		void onReceivedError(Exception exceptionToRead);
 		
 	}
 	
@@ -179,6 +191,8 @@ public class NJPollobDialogWorker extends CustomAsyncTask<Void, String>
 			if(eventListener != null){
 				
 				this.eventListener.onSuccessfullyExecution(dir1, dir2);
+
+
 				
 			}
 			
@@ -191,7 +205,18 @@ public class NJPollobDialogWorker extends CustomAsyncTask<Void, String>
 				this.eventListener.onReceivedError(ess);
 			}
 		}
-	
+
+		public void deleteCache(){
+
+			if(!isUseCache){
+
+				File f = new File(contextWrapper.getCacheDir().getPath()+"/", filenameWithExtension);
+				if(f.exists()){
+
+					f.delete();
+				}
+			}
+		}
 	
 	
 }

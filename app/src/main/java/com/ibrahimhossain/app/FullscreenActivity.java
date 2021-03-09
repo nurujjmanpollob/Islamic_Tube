@@ -19,26 +19,31 @@
 
 package com.ibrahimhossain.app;
 
+
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.Parcelable;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import com.google.android.material.snackbar.Snackbar;
-import com.ibrahimhossain.app.BackgroundWorker.InternetTester;
+import android.widget.Toast;
+
+import com.ibrahimhossain.app.BackgroundWorker.JSONParser;
 import com.ibrahimhossain.app.BackgroundWorker.WebRequestMaker;
 import com.ibrahimhossain.app.dialogview.NJPollobDialogLayout;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -47,13 +52,7 @@ public class FullscreenActivity extends AppCompatActivity {
     ConstraintLayout constraintLayout;
     ImageFilterView imageFilterView;
 
-
-
-
-    //request mode
-
-    private static final int REQ_START_STANDALONE_PLAYER = 1;
-    private static final int REQ_RESOLVE_SERVICE_MISSING = 2;
+    KProgressHUD kProgressHUD;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -61,10 +60,7 @@ public class FullscreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         //set full screen mode
         if(Objects.requireNonNull(getSupportActionBar()).isShowing()){
 
@@ -89,77 +85,171 @@ public class FullscreenActivity extends AppCompatActivity {
 
         //Create animation and apply to Image view
         Animation anim = AnimationUtils.loadAnimation(FullscreenActivity.this, R.anim.top_animation);
-
         imageFilterView.setAnimation(anim);
 
-        //Run basic connectivity check
+        anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
 
 
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
 
 
+                WebRequestMaker requestMaker = new WebRequestMaker(Variables.HOME_JSON_URL);
+                requestMaker.setEventListener(new WebRequestMaker.WebRequestEvent() {
+                    @Override
+                    public void onStartExecuting() {
 
-           InternetTester requestMaker = new InternetTester(InternetTester.PING_GOOGLE_SERVER);
-            requestMaker.setPingListener(new InternetTester.OnPingEvent() {
+                        kProgressHUD = new KProgressHUD(FullscreenActivity.this);
+                        kProgressHUD.setCancellable(false);
+                        kProgressHUD.setLabel("Connecting to database...");
+                        kProgressHUD.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
+                        kProgressHUD.show();
 
-                KProgressHUD kProgressHUD;
-
-                @Override
-                public void onPingRunning() {
-                    kProgressHUD  = new KProgressHUD(FullscreenActivity.this);
-                    kProgressHUD.setLabel("Pinging our server...");
-                    kProgressHUD.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
-                    kProgressHUD.setCancellable(false);
-                    kProgressHUD.show();
-                }
-
-                @Override
-                public void onPingSuccess() {
-
-
-                    if(kProgressHUD.isShowing()){
-
-                        kProgressHUD.dismiss();
                     }
 
-                    FullscreenActivity.this.startActivity(new Intent(FullscreenActivity.this, MainActivty.class));
+                    @Override
+                    public void onTaskFinished(String result) {
 
-                    FullscreenActivity.this.finish();
-
-                }
-
-                @Override
-                public void onPingFailed() {
-
-                    NJPollobDialogLayout dialogLayout = new NJPollobDialogLayout(FullscreenActivity.this);
-                    dialogLayout.setThumbnailByResource(R.drawable.error_404);
-                    dialogLayout.setDialogDescription("It is appears that internet is not working. Please check your connection.");
-                    dialogLayout.setListenerOnDialogButtonClick("Close App", null, new NJPollobDialogLayout.DialogButtonClickListener() {
-                        @Override
-                        public void onLeftButtonClick(View view) {
-
-                            FullscreenActivity.this.finish();
-
+                        if(kProgressHUD.isShowing()){
+                            kProgressHUD.dismiss();
                         }
 
-                        @Override
-                        public void onRightButtonClick(View view) {
+                        JSONParser parser = new JSONParser(result, Variables.VIDEO_JSON_ROOT);
+                        parser.setListener(new JSONParser.OnJSONParseEvent() {
+                            @Override
+                            public void onSuccessfullyParse(List<VideoData> videoDataList) {
 
+                                Intent intent = new Intent(FullscreenActivity.this, MainActivty.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putParcelableArrayList(Variables.VIDEO_INTENT_KEY, (ArrayList<? extends Parcelable>) videoDataList);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+
+                                finish();
+
+                            }
+
+                            @Override
+                            public void onNullInput() {
+
+
+
+                            }
+
+                            @Override
+                            public void containsErrorInArray(String cause, List<VideoData> dataParsedSoFar) {
+
+                                NJPollobDialogLayout layout = new NJPollobDialogLayout(FullscreenActivity.this);
+                                layout.setDialogDescription(cause);
+                                layout.setThumbnailByResource(R.drawable.error_404);
+                                layout.setCancelable(false);
+                                layout.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+                                    @Override
+                                    public void onLeftButtonClick(View view) {
+
+                                    }
+
+                                    @Override
+                                    public void onRightButtonClick(View view) {
+
+                                        finish();
+
+                                    }
+                                });
+
+                                layout.show();
+
+
+
+                            }
+
+                            @Override
+                            public void singleItemFailed(String cause, List<VideoData> dataParsedSoFar) {
+
+                                NJPollobDialogLayout layout = new NJPollobDialogLayout(FullscreenActivity.this);
+                                layout.setDialogDescription(cause);
+                                layout.setThumbnailByResource(R.drawable.error_404);
+                                layout.setCancelable(false);
+                                layout.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+                                    @Override
+                                    public void onLeftButtonClick(View view) {
+
+                                    }
+
+                                    @Override
+                                    public void onRightButtonClick(View view) {
+
+                                        finish();
+
+                                    }
+                                });
+
+                                layout.show();
+
+                            }
+                        });
+
+                        parser.Parse();
+
+                        /*
+                        Intent i = new Intent(FullscreenActivity.this, MainActivty.class);
+                        i.putExtra(Variables.HOME_INPUT_JSON, result);
+                        startActivity(i);
+
+                        finish();
+
+                         */
+
+
+                    }
+
+                    @Override
+                    public void onLoadFailed(String cause) {
+
+                        if(kProgressHUD.isShowing()){
+                            kProgressHUD.dismiss();
                         }
-                    });
 
-                    dialogLayout.show();
+                        NJPollobDialogLayout layout = new NJPollobDialogLayout(FullscreenActivity.this);
+                        layout.setDialogDescription(cause);
+                        layout.setThumbnailByResource(R.drawable.error_404);
+                        layout.setCancelable(false);
+                        layout.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+                            @Override
+                            public void onLeftButtonClick(View view) {
 
-                }
+                            }
+
+                            @Override
+                            public void onRightButtonClick(View view) {
+
+                                finish();
+
+                            }
+                        });
+
+                        layout.show();
 
 
-            });
-            requestMaker.runThread();
+                    }
+                });
+                requestMaker.runThread();
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
 
 
 
-        }, 2200);
 
 
 
