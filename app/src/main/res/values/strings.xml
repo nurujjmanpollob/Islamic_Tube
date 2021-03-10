@@ -29,4 +29,5 @@
     <string name="user_name">Nurujjaman Poolob</string>
     <string name="no_database">It is appears that no database has been added</string>
     <string name="error_player">Youtube Player Error</string>
+    <string name="contact_me">Contact ME</string>
 </resources>

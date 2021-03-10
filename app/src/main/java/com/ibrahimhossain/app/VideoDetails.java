@@ -148,12 +148,12 @@ public class VideoDetails extends AppCompatActivity {
 
         //Set thumbnail Image
         if (videoDetailsDatabase != null) {
-            new InternetImageLoader(videoDetailsDatabase.getVideoThumbnail(), R.drawable.error_404, thumbnailView, VideoDetails.this).runThread();
+            new InternetImageLoader(videoDetailsDatabase.getVideoThumbnail(), R.drawable.loading, R.drawable.error_404, thumbnailView, VideoDetails.this).runThread();
         }
 
         //Set Avatar Image and set
         if (videoDetailsDatabase != null) {
-            new InternetImageLoader(videoDetailsDatabase.getAuthorAvatarURL(), 0, authorAvatarView, VideoDetails.this).runThread();
+            new InternetImageLoader(videoDetailsDatabase.getAuthorAvatarURL(), 0,  R.drawable.error_404, authorAvatarView, VideoDetails.this).runThread();
         }
 
 
@@ -265,6 +265,116 @@ public class VideoDetails extends AppCompatActivity {
 
         });
 
+        //React on Author avatar view
+        authorAvatarView.setOnClickListener(v -> {
+
+            WebRequestMaker requestMaker = new WebRequestMaker(videoDetailsDatabase.getAuthorProfileURL());
+            requestMaker.setEventListener(new WebRequestMaker.WebRequestEvent() {
+
+                KProgressHUD kProgressHUD;
+                @Override
+                public void onStartExecuting() {
+
+                    kProgressHUD = new KProgressHUD(VideoDetails.this);
+                    kProgressHUD.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
+                    kProgressHUD.setLabel("Querying Author Profile...");
+                    kProgressHUD.setCancellable(false);
+                    kProgressHUD.show();
+
+                }
+
+                @Override
+                public void onTaskFinished(String result) {
+
+                    if(kProgressHUD.isShowing()){
+
+                        kProgressHUD.dismiss();
+                    }
+                    AuthorProfileDetailsParser parser = new AuthorProfileDetailsParser(Variables.AUTHOR_PROFILE_DATABASE_ROOT, result);
+                    parser.setListener(new AuthorProfileDetailsParser.AuthorProfileDetailsDatabaseListener() {
+                        @Override
+                        public void onNullValueOrInput() {
+
+                        }
+
+                        @Override
+                        public void onArrayNotFound(String cause) {
+
+                            NJPollobDialogLayout layout = new NJPollobDialogLayout(VideoDetails.this);
+                            layout.setDialogDescription(cause);
+                            layout.setCancelable(false);
+                            layout.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+                                @Override
+                                public void onLeftButtonClick(View view) {
+
+                                }
+
+                                @Override
+                                public void onRightButtonClick(View view) {
+
+                                    layout.dismiss();
+
+
+                                }
+                            });
+
+                            layout.show();
+                        }
+
+                        @Override
+                        public void onSingleObjectNotFound(String cause) {
+
+                            NJPollobDialogLayout layout = new NJPollobDialogLayout(VideoDetails.this);
+                            layout.setDialogDescription(cause);
+                            layout.setCancelable(false);
+                            layout.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+                                @Override
+                                public void onLeftButtonClick(View view) {
+
+                                }
+
+                                @Override
+                                public void onRightButtonClick(View view) {
+
+                                    layout.dismiss();
+
+
+                                }
+                            });
+
+                            layout.show();
+
+                        }
+
+                        @Override
+                        public void onSuccessfulData(AuthorProfileDetailsDatabase videoDetailsDatabase) {
+
+                            Intent i = new Intent(VideoDetails.this, AuthorDetailsActivity.class);
+                            Bundle v = new Bundle();
+                            i.putExtra(Variables.AUTHOR_PROFILE_INTENT_KEY, videoDetailsDatabase);
+                            i.putExtras(v);
+                            startActivity(i);
+
+                        }
+                    });
+
+                    parser.parseVideoDatabaseForResult();
+
+                }
+
+                @Override
+                public void onLoadFailed(String cause) {
+
+                    if(kProgressHUD.isShowing()){
+
+                        kProgressHUD.dismiss();
+                    }
+
+                }
+            });
+
+        });
+
 
         super.onCreate(savedInstanceState);
     }
@@ -304,4 +414,7 @@ public class VideoDetails extends AppCompatActivity {
             }
         }
     }
+
+
+
 }

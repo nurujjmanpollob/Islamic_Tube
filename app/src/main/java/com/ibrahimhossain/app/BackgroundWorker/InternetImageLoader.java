@@ -40,20 +40,24 @@ public class InternetImageLoader extends CustomAsyncTask<Void, Bitmap> {
     int imageWidth;
     int onErrorSrc;
     int imageHeight;
+    int placeHolder;
+
+    ListenOnLoadResourceSetFailed listenOnLoadResourceSetFailed;
 
 
     @SuppressWarnings({"UnusedDeclaration"})
-    public InternetImageLoader(String url, int onErrorSrc, ImageView imageView, Context context){
+    public InternetImageLoader(String url, int placeholder, int onErrorSrc, ImageView imageView, Context context){
 
         this.url = url;
         this.imageView = imageView;
         this.context = context;
         this.onErrorSrc = onErrorSrc;
+        this.placeHolder = placeholder;
 
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
-    public InternetImageLoader(String url, int onErrorSrc, ImageView imageView, Context context, int imageWidth, int imageHeight){
+    public InternetImageLoader(String url, int placeholder, int onErrorSrc, ImageView imageView, Context context, int imageWidth, int imageHeight){
 
         this.url = url;
         this.onErrorSrc = onErrorSrc;
@@ -61,9 +65,33 @@ public class InternetImageLoader extends CustomAsyncTask<Void, Bitmap> {
         this.context = context;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
+        this.placeHolder = placeholder;
 
     }
 
+    @Override
+    protected void preExecute() {
+
+        if(placeHolder > 0){
+
+            try{
+
+                new Handler(Looper.getMainLooper()).post(() -> imageView.setImageResource(placeHolder));
+
+
+
+            }catch (Exception ess){
+
+                if(listenOnLoadResourceSetFailed != null){
+
+                    listenOnLoadResourceSetFailed.reasonForFailer(ess);
+                }
+
+
+            }
+        }
+        super.preExecute();
+    }
 
     @Override
     protected Bitmap doBackgroundTask() {
@@ -95,12 +123,39 @@ public class InternetImageLoader extends CustomAsyncTask<Void, Bitmap> {
 
             if(imageWidth >= 1 && imageHeight >= 1){
 
-                new Handler(Looper.getMainLooper()).post(() -> imageView.setImageBitmap(getResizeBitmap(bitmap, imageWidth, imageHeight)));
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    try {
+                        imageView.setImageBitmap(getResizeBitmap(bitmap, imageWidth, imageHeight));
+                    }catch (Exception ess){
+
+                        if(listenOnLoadResourceSetFailed != null){
+
+                            listenOnLoadResourceSetFailed.reasonForFailer(ess);
+                        }
+
+
+
+                    }
+
+                });
 
 
             }else{
 
-                new Handler(Looper.getMainLooper()).post(() -> imageView.setImageBitmap(bitmap));
+                new Handler(Looper.getMainLooper()).post(() -> {
+
+                    try{
+                        imageView.setImageBitmap(bitmap);
+                    }catch (Exception ec){
+
+                        if(listenOnLoadResourceSetFailed != null){
+
+                            listenOnLoadResourceSetFailed.reasonForFailer(ec);
+                        }
+
+                    }
+
+                });
 
 
             }
@@ -108,7 +163,18 @@ public class InternetImageLoader extends CustomAsyncTask<Void, Bitmap> {
 
             new Handler(Looper.getMainLooper()).post(() -> {
                 if(onErrorSrc > 0) {
-                    imageView.setImageResource(onErrorSrc);
+
+                    try {
+                        imageView.setImageResource(onErrorSrc);
+                    }catch (Exception esss){
+
+                        if(listenOnLoadResourceSetFailed != null){
+
+                            listenOnLoadResourceSetFailed.reasonForFailer(esss);
+                        }
+
+
+                    }
                 }
             });
 
@@ -134,5 +200,17 @@ public class InternetImageLoader extends CustomAsyncTask<Void, Bitmap> {
                 bm, 0, 0, width, height, matrix, false);
         bm.recycle();
         return resizedBitmap;
+    }
+
+
+    public interface ListenOnLoadResourceSetFailed{
+
+
+        void reasonForFailer(Exception exception);
+    }
+
+    public void setListenerOnResourceSetFailed(ListenOnLoadResourceSetFailed eventListener){
+
+        this.listenOnLoadResourceSetFailed = eventListener;
     }
 }

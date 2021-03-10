@@ -45,6 +45,7 @@ import com.ibrahimhossain.app.Variables;
 import com.ibrahimhossain.app.VideoData;
 import com.ibrahimhossain.app.VideoDetails;
 import com.ibrahimhossain.app.VideoDetailsDatabase;
+import com.ibrahimhossain.app.dialogview.NJPollobDialogLayout;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 import java.util.ArrayList;
@@ -79,7 +80,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapter
     public void onBindViewHolder(@NonNull VideoAdapterView holder, int position) {
 
 
-        new InternetImageLoader(videoData.get(position).getThumbnailURL(), R.drawable.error_404, holder.thumbnailView, applicationContext).runThread();
+        new InternetImageLoader(videoData.get(position).getThumbnailURL(), R.drawable.loading, R.drawable.error_404, holder.thumbnailView, applicationContext).runThread();
 
         //set title
         holder.videoTitleView.setText(videoData.get(position).getTitle());
@@ -128,21 +129,59 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapter
                         @Override
                         public void onNullValueOrInput() {
 
-                            System.out.println("No internet or database.");
 
                         }
 
                         @Override
                         public void onArrayNotFound(String cause) {
 
-                            System.out.println("ArrayNotFound: "+cause);
+
+                            NJPollobDialogLayout layout = new NJPollobDialogLayout(applicationContext);
+                            layout.setDialogDescription(cause);
+                            layout.setCancelable(false);
+                            layout.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+                                @Override
+                                public void onLeftButtonClick(View view) {
+
+                                }
+
+                                @Override
+                                public void onRightButtonClick(View view) {
+
+                                    layout.dismiss();
+
+
+                                }
+                            });
+
+                            layout.show();
+
+
 
                         }
 
                         @Override
                         public void onSingleObjectNotFound(String cause) {
 
-                            System.out.println("SingleObjectNotFound: "+cause);
+                            NJPollobDialogLayout layout = new NJPollobDialogLayout(applicationContext);
+                            layout.setDialogDescription(cause);
+                            layout.setCancelable(false);
+                            layout.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+                                @Override
+                                public void onLeftButtonClick(View view) {
+
+                                }
+
+                                @Override
+                                public void onRightButtonClick(View view) {
+
+                                    layout.dismiss();
+
+
+                                }
+                            });
+
+                            layout.show();
 
                         }
 

@@ -51,8 +51,7 @@
                 <pl.droidsonroids.gif.GifImageView
                     android:id="@+id/video_details_main_thumbnailview"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:src="@drawable/sample_thumbnail" />
+                    android:layout_height="200dp" />
 
 
 
@@ -78,9 +77,9 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/video_details_profile_image"
                     android:layout_width="40dp"
+                    android:src="@drawable/ic_baseline_perm_identity_24"
                     android:layout_height="40dp"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/user_photo"
                     app:civ_border_color="#FF000000"
                     app:civ_border_width="0dp" />
 

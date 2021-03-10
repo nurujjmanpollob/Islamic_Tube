@@ -122,22 +122,14 @@ public class WebReferenceLoader extends AppCompatActivity {
             @Override
             public void onProgressChanged(WebView view, int newProgress){
 
-
-
                 hud = KProgressHUD.create(WebReferenceLoader.this);
                 hud.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
-                hud.setLabel("Please wait");
+                hud.setLabel("Please wait...");
 
              if (!hud.isShowing()){
 
                  hud.show();
              }
-
-                if(newProgress >= 80){
-
-                    hud.setLabel("Almost Loaded");
-                }
-
                 if(newProgress >= 95){
 
                     if(hud.isShowing()){

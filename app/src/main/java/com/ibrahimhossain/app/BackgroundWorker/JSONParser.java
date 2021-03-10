@@ -160,9 +160,7 @@ public class JSONParser {
 
 
     public static class VideoDetailsParser{
-
-      private  VideoDetailsDatabase videoDetailsDatabase;
-      private  String arrayToLook;
+        private  String arrayToLook;
       private  String jsonInput;
       private VideoDetailsDatabaseListener listener;
 
@@ -215,13 +213,11 @@ public class JSONParser {
                            String authorAvatarURL = childObject.getString(Variables.VIDEO_DETAILS_AUTHOR_AVATAR);
                            String websiteReference = childObject.getString(Variables.VIDEO_DETAILS_WEBSITE_URL);
                            String videoThumbnail = childObject.getString(Variables.VIDEO_DETAILS_THUMBNAIL);
-
-                           videoDetailsDatabase = new VideoDetailsDatabase(title, description, authorName, authorAvatarURL, videoURL, videoThumbnail, websiteReference);
-
+                           String authorProfileURL = childObject.getString(Variables.VIDEO_DETAILS_AUTHOR_PROFILE_URL);
 
 
                            //return database
-                           return videoDetailsDatabase;
+                           return new VideoDetailsDatabase(title, description, authorName, authorAvatarURL, videoURL, videoThumbnail, websiteReference, authorProfileURL);
                        }catch (Exception es){
 
                            //single object failed

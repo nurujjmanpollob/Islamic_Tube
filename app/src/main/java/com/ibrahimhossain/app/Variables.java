@@ -19,6 +19,7 @@
 
 package com.ibrahimhossain.app;
 
+@SuppressWarnings({"UnusedDeclaration"})
 public class Variables {
 
     //Home page URL here
@@ -83,11 +84,45 @@ public class Variables {
     //Video details intent
     public static String VIDEO_DETAILS_INTENT_KEY = "urltobepassed";
 
+    //Video details author full profile URL
+    public static String VIDEO_DETAILS_AUTHOR_PROFILE_URL = "authorprofileurl";
+
     //Web Reference Loader intent key
     public static String WEB_REFERENCE_INTENT_KEY = "webintent";
 
     //START Search engine URL for WebView Activity
     public static String SEARCH_ENGINE_URL_GOOGLE = "https://www.google.com/search?q=";
+
+
+    //Author profile details database root
+    public static String AUTHOR_PROFILE_DATABASE_ROOT = "root";
+
+    //Author profile author name
+    public static String AUTHOR_PROFILE_AUTHOR_NAME = "name";
+
+    //Author profile author avatar
+    public static String AUTHOR_PROFILE_AUTHOR_AVATAR_URL = "image";
+
+    //Author home address
+    public static String AUTHOR_PROFILE_AUTHOR_HOME_ADDRESS = "address";
+
+    //Author contact email
+    public static String AUTHOR_PROFILE_AUTHOR_EMAIL = "email";
+
+    //Author fb link
+    public static String AUTHOR_PROFILE_AUTHOR_FACEBOOK_ID_LINK = "fbid";
+
+    //Author whatsapp number
+    public static String AUTHOR_PROFILE_AUTHOR_WHATSAPP_NO = "whatsappno";
+
+    //Author Linkedin ID
+    public static String AUTHOR_PROFILE_AUTHOR_LINKEDIN_ID = "linkedinid";
+
+    //Author profile intent
+    public static String AUTHOR_PROFILE_INTENT_KEY = "authorintentkey";
+
+
+
 
     //Youtube Player Developer Key
     /**

@@ -25,7 +25,7 @@
     android:padding="@dimen/paddingTop"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/card_background">
+    android:background="#424242">
 
 
     <com.google.android.material.circularreveal.CircularRevealRelativeLayout

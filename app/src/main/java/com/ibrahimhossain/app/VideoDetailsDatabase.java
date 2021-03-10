@@ -32,14 +32,14 @@ public class VideoDetailsDatabase implements Parcelable {
     String videoURL;
     String videoReferenceWebsite;
     String videoThumbnail;
-
+    String authorProfileURL;
     //Stats
     Boolean isNotNull = true;
 
 
     //Create constructor parameter
 
-    public VideoDetailsDatabase(String videoTitle, String videoDescription, String authorName, String authorAvatarURL, String videoURL, String videoThumbnail, String videoReferenceWebsite){
+    public VideoDetailsDatabase(String videoTitle, String videoDescription, String authorName, String authorAvatarURL, String videoURL, String videoThumbnail, String videoReferenceWebsite, String authorProfileURL){
 
         this.videoTitle = videoTitle;
         this.videoDescription = videoDescription;
@@ -48,6 +48,7 @@ public class VideoDetailsDatabase implements Parcelable {
         this.videoURL = videoURL;
         this.videoThumbnail = videoThumbnail;
         this.videoReferenceWebsite = videoReferenceWebsite;
+        this.authorProfileURL = authorProfileURL;
     }
 
     //Create empty constructor
@@ -62,6 +63,7 @@ public class VideoDetailsDatabase implements Parcelable {
         authorName = in.readString();
         authorAvatarURL = in.readString();
         videoTitle = in.readString();
+        authorProfileURL = in.readString();
         videoDescription = in.readString();
         videoURL = in.readString();
         videoReferenceWebsite = in.readString();
@@ -81,6 +83,14 @@ public class VideoDetailsDatabase implements Parcelable {
             return new VideoDetailsDatabase[size];
         }
     };
+
+    public String getAuthorProfileURL() {
+        return authorProfileURL;
+    }
+
+    public void setAuthorProfileURL(String authorProfileURL) {
+        this.authorProfileURL = authorProfileURL;
+    }
 
     public void setAuthorAvatarURL(String authorAvatarURL) {
         this.authorAvatarURL = authorAvatarURL;
@@ -158,6 +168,7 @@ public class VideoDetailsDatabase implements Parcelable {
         dest.writeString(videoURL);
         dest.writeString(videoReferenceWebsite);
         dest.writeString(videoThumbnail);
+        dest.writeString(authorProfileURL);
         dest.writeByte((byte) (isNotNull == null ? 0 : isNotNull ? 1 : 2));
     }
 }
