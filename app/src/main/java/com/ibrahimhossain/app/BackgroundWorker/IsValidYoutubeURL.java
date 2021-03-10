@@ -79,17 +79,28 @@ public class IsValidYoutubeURL {
 
        int lengthOfInput = url.length();
 
-       if(url.substring(0, ytPattern1.length()).equals(ytPattern1)){
+       try {
 
-           return url.substring(ytPattern1.length(), lengthOfInput);
-       }else {
+           if (url.substring(0, ytPattern1.length()).equals(ytPattern1)) {
 
-           if(url.substring(0, ytPattern2.length()).equals(ytPattern2)){
-               return url.substring(ytPattern2.length(), lengthOfInput);
-           }else {
+               return url.substring(ytPattern1.length(), lengthOfInput);
+           }
+       }catch (Exception e) {
+
+           try {
+
+               if (url.substring(0, ytPattern2.length()).equals(ytPattern2)) {
+                   return url.substring(ytPattern2.length(), lengthOfInput);
+               }
+
+           }catch (Exception es) {
+
                return url;
+
            }
        }
+
+      return url;
 
     }
 

@@ -18,6 +18,7 @@
 
 package com.ibrahimhossain.app;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -38,9 +39,12 @@ import android.webkit.DownloadListener;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.palette.graphics.Palette;
 
@@ -58,6 +62,8 @@ public class WebReferenceLoader extends AppCompatActivity {
 
 
 
+
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -119,18 +125,20 @@ public class WebReferenceLoader extends AppCompatActivity {
 
 
                 hud = KProgressHUD.create(WebReferenceLoader.this);
-                hud.setStyle(KProgressHUD.Style.BAR_DETERMINATE);
+                hud.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
                 hud.setLabel("Please wait");
 
-                hud.setMaxProgress(100);
-                hud.setProgress(newProgress);
+             if (!hud.isShowing()){
+
+                 hud.show();
+             }
 
                 if(newProgress >= 80){
 
                     hud.setLabel("Almost Loaded");
                 }
 
-                if(newProgress == 100){
+                if(newProgress >= 95){
 
                     if(hud.isShowing()){
 
@@ -222,7 +230,7 @@ public class WebReferenceLoader extends AppCompatActivity {
 
                 //lets queque current download
                 DownloadManager manager = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
                 }
                 assert manager != null;
@@ -291,6 +299,12 @@ public class WebReferenceLoader extends AppCompatActivity {
         //Lets set up BroadCastReceiver for this activity
 
 
+        WebSettings settings = loader.getSettings();
+        settings.setUseWideViewPort(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            WebView.enableSlowWholeDocumentDraw();
+        }
+        settings.setJavaScriptEnabled(true);
 
 
         super.onCreate(savedInstanceState);
@@ -318,14 +332,6 @@ public class WebReferenceLoader extends AppCompatActivity {
         super.onNewIntent(intent);
     }
 
-
-
-    @Override
-    public void onBackPressed()
-    {
-        // TODO: Implement this method
-        super.onBackPressed();
-    }
 
     @Override
     protected void onPause()

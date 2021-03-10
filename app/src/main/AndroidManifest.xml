@@ -74,6 +74,10 @@
         <activity android:name=".YotubeVideoPlayer"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 
+
+        <activity android:name=".WebReferenceLoader"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+
     </application>
 
 </manifest>

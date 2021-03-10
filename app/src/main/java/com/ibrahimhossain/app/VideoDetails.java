@@ -259,6 +259,8 @@ public class VideoDetails extends AppCompatActivity {
                 }
             });
 
+            videoURLS.runTest();
+
 
 
         });
