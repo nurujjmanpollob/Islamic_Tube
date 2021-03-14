@@ -89,6 +89,7 @@
         android:id="@+id/main_fragment_holder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="115dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <include

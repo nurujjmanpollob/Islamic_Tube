@@ -44,6 +44,10 @@ public class InternetImageLoader extends CustomAsyncTask<Void, Bitmap> {
 
     ListenOnLoadResourceSetFailed listenOnLoadResourceSetFailed;
 
+    Runnable runnable;
+
+    Handler handler;
+
 
     @SuppressWarnings({"UnusedDeclaration"})
     public InternetImageLoader(String url, int placeholder, int onErrorSrc, ImageView imageView, Context context){
@@ -76,7 +80,12 @@ public class InternetImageLoader extends CustomAsyncTask<Void, Bitmap> {
 
             try{
 
-                new Handler(Looper.getMainLooper()).post(() -> imageView.setImageResource(placeHolder));
+                runnable = () -> imageView.setImageResource(placeHolder);
+
+             handler =   new Handler(Looper.getMainLooper());
+             handler.post(runnable);
+             handler.removeCallbacks(runnable);
+
 
 
 
@@ -123,27 +132,33 @@ public class InternetImageLoader extends CustomAsyncTask<Void, Bitmap> {
 
             if(imageWidth >= 1 && imageHeight >= 1){
 
-                new Handler(Looper.getMainLooper()).post(() -> {
+                handler = new Handler(Looper.getMainLooper());
+                runnable = () -> {
+
                     try {
                         imageView.setImageBitmap(getResizeBitmap(bitmap, imageWidth, imageHeight));
-                    }catch (Exception ess){
+                    }catch (Exception ess) {
 
-                        if(listenOnLoadResourceSetFailed != null){
+                        if (listenOnLoadResourceSetFailed != null) {
 
                             listenOnLoadResourceSetFailed.reasonForFailer(ess);
                         }
-
-
-
                     }
+                };
 
-                });
+                handler.post(runnable);
+                handler.removeCallbacks(runnable);
+
+
+
+
+
 
 
             }else{
 
-                new Handler(Looper.getMainLooper()).post(() -> {
-
+                handler = new Handler(Looper.getMainLooper());
+                runnable = () -> {
                     try{
                         imageView.setImageBitmap(bitmap);
                     }catch (Exception ec){
@@ -154,14 +169,17 @@ public class InternetImageLoader extends CustomAsyncTask<Void, Bitmap> {
                         }
 
                     }
+                };
 
-                });
-
+                handler.post(runnable);
+                handler.removeCallbacks(runnable);
 
             }
         }else{
 
-            new Handler(Looper.getMainLooper()).post(() -> {
+            handler = new Handler(Looper.getMainLooper());
+            runnable = () -> {
+
                 if(onErrorSrc > 0) {
 
                     try {
@@ -176,7 +194,15 @@ public class InternetImageLoader extends CustomAsyncTask<Void, Bitmap> {
 
                     }
                 }
-            });
+
+
+            };
+
+            handler.post(runnable);
+            handler.removeCallbacks(runnable);
+
+
+
 
         }
 
@@ -212,5 +238,13 @@ public class InternetImageLoader extends CustomAsyncTask<Void, Bitmap> {
     public void setListenerOnResourceSetFailed(ListenOnLoadResourceSetFailed eventListener){
 
         this.listenOnLoadResourceSetFailed = eventListener;
+    }
+
+    @Override
+    public void runThread() {
+        if(imageView.getDrawable() == null){
+            super.runThread();
+        }
+
     }
 }

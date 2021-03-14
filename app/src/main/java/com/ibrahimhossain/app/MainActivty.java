@@ -20,38 +20,26 @@
 package com.ibrahimhossain.app;
 
 
-import android.net.Uri;
+
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.doodle.android.chips.ChipsView;
-import com.doodle.android.chips.model.Contact;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.ibrahimhossain.app.WebRequestMaker.VideoAdapter;
 import com.ibrahimhossain.app.fragments.LibraryFragment;
 import com.ibrahimhossain.app.fragments.SubscriptionFragment;
 import com.ibrahimhossain.app.fragments.VideoFragment;
 import com.kaopiz.kprogresshud.KProgressHUD;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,8 +52,6 @@ public class MainActivty extends AppCompatActivity {
    // RecyclerView recyclerView;
     Toolbar toolbar;
     CircleImageView profileImageView;
-
-   KProgressHUD progressHUD;
 
     View errorTxt;
 
@@ -221,6 +207,7 @@ public class MainActivty extends AppCompatActivity {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.main_fragment_holder, fragment);
             transaction.commit();
+
         }
         }
 

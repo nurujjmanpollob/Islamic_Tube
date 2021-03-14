@@ -76,6 +76,7 @@ public abstract class CustomAsyncTask<Progress, Result> {
 
         exc.shutdown();
 
+
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
@@ -89,6 +90,7 @@ public abstract class CustomAsyncTask<Progress, Result> {
     public static void cancalWork(){
 
         exc.shutdown();
+
 
     }
 
