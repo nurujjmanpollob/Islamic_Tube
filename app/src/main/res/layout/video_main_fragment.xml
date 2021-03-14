@@ -17,9 +17,16 @@
   ~
   -->
 
-<set xmlns:android="http://schemas.android.com/apk/res/android">
-    <translate
-        android:duration="@android:integer/config_mediumAnimTime"
-        android:fromXDelta="100%p"
-        android:toXDelta="0" />
-</set>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#132025"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/main_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

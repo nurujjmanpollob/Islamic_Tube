@@ -76,6 +76,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapter
         return new VideoAdapterView(layoutView);
     }
 
+
+    public void filterList(List<VideoData> dataList){
+
+        videoData = dataList;
+        notifyDataSetChanged();
+
+    }
+
     @Override
     public void onBindViewHolder(@NonNull VideoAdapterView holder, int position) {
 
@@ -123,82 +131,11 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapter
                         kProgressHUD.dismiss();
                     }
 
-                    JSONParser.VideoDetailsParser videoDetailsParser = new JSONParser.VideoDetailsParser();
-                    videoDetailsParser.ModeVideoDetailsDatabase(Variables.VIDEO_DETAILS_JSON_ROOT, result);
-                    videoDetailsParser.setListenerForVideoDetailsDatabase(new JSONParser.VideoDetailsParser.VideoDetailsDatabaseListener() {
-                        @Override
-                        public void onNullValueOrInput() {
 
+                    Intent i = new Intent(applicationContext, VideoDetails.class);
+                    i.putExtra(Variables.VIDEO_DETAILS_INTENT_KEY, result);
+                    applicationContext.startActivity(i);
 
-                        }
-
-                        @Override
-                        public void onArrayNotFound(String cause) {
-
-
-                            NJPollobDialogLayout layout = new NJPollobDialogLayout(applicationContext);
-                            layout.setDialogDescription(cause);
-                            layout.setCancelable(false);
-                            layout.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
-                                @Override
-                                public void onLeftButtonClick(View view) {
-
-                                }
-
-                                @Override
-                                public void onRightButtonClick(View view) {
-
-                                    layout.dismiss();
-
-
-                                }
-                            });
-
-                            layout.show();
-
-
-
-                        }
-
-                        @Override
-                        public void onSingleObjectNotFound(String cause) {
-
-                            NJPollobDialogLayout layout = new NJPollobDialogLayout(applicationContext);
-                            layout.setDialogDescription(cause);
-                            layout.setCancelable(false);
-                            layout.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
-                                @Override
-                                public void onLeftButtonClick(View view) {
-
-                                }
-
-                                @Override
-                                public void onRightButtonClick(View view) {
-
-                                    layout.dismiss();
-
-
-                                }
-                            });
-
-                            layout.show();
-
-                        }
-
-                        @Override
-                        public void onSuccessfulData(VideoDetailsDatabase videoDetailsDatabase) {
-
-                            Intent intent = new Intent(applicationContext, VideoDetails.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putParcelable(Variables.VIDEO_DETAILS_INTENT_KEY,videoDetailsDatabase);
-                            intent.putExtras(bundle);
-                           applicationContext.startActivity(intent);
-
-
-                        }
-                    });
-
-                    videoDetailsParser.parseVideoDatabaseForResult();
 
                 }
 
@@ -206,9 +143,32 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapter
                 public void onLoadFailed(String cause) {
 
 
+
+
                     if(kProgressHUD.isShowing()){
                         kProgressHUD.dismiss();
                     }
+
+
+                    NJPollobDialogLayout layout = new NJPollobDialogLayout(applicationContext);
+                    layout.setDialogDescription(cause);
+                    layout.setCancelable(false);
+                    layout.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+                        @Override
+                        public void onLeftButtonClick(View view) {
+
+                        }
+
+                        @Override
+                        public void onRightButtonClick(View view) {
+
+                            layout.dismiss();
+
+
+                        }
+                    });
+
+                    layout.show();
 
                 }
             });

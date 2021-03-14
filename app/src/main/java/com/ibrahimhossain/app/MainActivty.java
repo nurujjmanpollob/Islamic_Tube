@@ -20,20 +20,34 @@
 package com.ibrahimhossain.app;
 
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.SearchView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.doodle.android.chips.ChipsView;
+import com.doodle.android.chips.model.Contact;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ibrahimhossain.app.WebRequestMaker.VideoAdapter;
+import com.ibrahimhossain.app.fragments.LibraryFragment;
+import com.ibrahimhossain.app.fragments.SubscriptionFragment;
+import com.ibrahimhossain.app.fragments.VideoFragment;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.json.JSONArray;
@@ -47,18 +61,31 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivty extends AppCompatActivity {
 
-    RecyclerView recyclerView;
+   // RecyclerView recyclerView;
     Toolbar toolbar;
     CircleImageView profileImageView;
-    AppCompatTextView titleView;
 
    KProgressHUD progressHUD;
 
     View errorTxt;
 
 
+
     //Add database instance
     List<VideoData> input = new ArrayList<>();
+
+    //Searchview
+    SearchView searchView;
+
+    //Bottom Navigation view
+    BottomNavigationView bottomNavigationView;
+
+    //Video Fragment
+    VideoFragment videoFragment;
+
+    //save video fragment state(Visibity) in boolean
+    Boolean isVideoFragmentVisible = true;
+
 
 
     @Override
@@ -80,29 +107,97 @@ public class MainActivty extends AppCompatActivity {
         //Initialize views
         toolbar = findViewById(R.id.main_toolbar);
         profileImageView = findViewById(R.id.main_toolbar_profile_image);
-        titleView = findViewById(R.id.main_toolbar_text_view);
-        recyclerView = findViewById(R.id.main_recycler_view);
+       // recyclerView = findViewById(R.id.main_recycler_view);
         errorTxt = findViewById(R.id.main_error_text_view);
+        searchView = findViewById(R.id.main_toolbar_search_view);
+        bottomNavigationView = findViewById(R.id.main_activity_bottom_navigation_view);
 
         if(getIntent().hasExtra(Variables.VIDEO_INTENT_KEY)){
 
             input = getIntent().getParcelableArrayListExtra(Variables.VIDEO_INTENT_KEY);
         }
 
+        videoFragment = new VideoFragment(MainActivty.this, input);
+        //Load main fragment
+        loadFragment(videoFragment);
+
+
         //Set Layout manager
-        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivty.this));
+      //  recyclerView.setLayoutManager(new LinearLayoutManager(MainActivty.this));
 
 
         //Call new instance of video adapter
-        VideoAdapter adapter = new VideoAdapter(MainActivty.this, input);
+    //   adapter  = new VideoAdapter(MainActivty.this, input);
 
         //set recyclerview adapter
-        recyclerView.setAdapter(adapter);
+      //  recyclerView.setAdapter(adapter);
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                if(isVideoFragmentVisible){
+
+                    videoFragment.updateLayout(query);
+
+                }
+              //  filter(query);
+
+
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+             //   filter(newText);
+                return false;
+            }
+        });
+
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                if(item.getItemId() == R.id.home_activity){
+
+                  if(!isVideoFragmentVisible) {
+                      loadFragment(new VideoFragment(MainActivty.this, input));
+                  }
+
+                    isVideoFragmentVisible = true;
+
+                }
+
+                if(item.getItemId() == R.id.library_activity){
+
+                    isVideoFragmentVisible = false;
+
+                        loadFragment(new LibraryFragment());
+
+                }
+
+                if(item.getItemId() == R.id.subscription_activity){
+
+                    isVideoFragmentVisible = false;
+
+                        loadFragment(new SubscriptionFragment());
+
+                    return true;
+                }
+                return true;
+            }
+        });
+
 
 
 
 
     }
+
 
 
 
@@ -117,4 +212,16 @@ public class MainActivty extends AppCompatActivity {
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
+
+
+
+    public void loadFragment(Fragment fragment) {
+
+        if(!fragment.isAdded()) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.add(R.id.main_fragment_holder, fragment);
+            transaction.commit();
+        }
+        }
+
 }

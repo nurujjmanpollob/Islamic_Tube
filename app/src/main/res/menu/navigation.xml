@@ -17,9 +17,20 @@
   ~
   -->
 
-<set xmlns:android="http://schemas.android.com/apk/res/android">
-    <translate
-        android:duration="@android:integer/config_mediumAnimTime"
-        android:fromXDelta="100%p"
-        android:toXDelta="0" />
-</set>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Home"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:id="@+id/home_activity"/>
+
+    <item android:title="Library"
+        android:icon="@drawable/ic_baseline_video_library_24"
+        android:id="@+id/library_activity"/>
+
+    <item android:title="Subscription"
+        android:icon="@drawable/ic_baseline_subscriptions_24"
+        android:id="@+id/subscription_activity"/>
+
+
+
+</menu>

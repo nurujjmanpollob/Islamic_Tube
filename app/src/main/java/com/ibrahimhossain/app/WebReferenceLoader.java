@@ -43,8 +43,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
-
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.palette.graphics.Palette;
 
@@ -53,12 +51,15 @@ import com.ibrahimhossain.app.BackgroundWorker.ThreadFixer;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 import java.io.File;
+import java.util.Objects;
 
 public class WebReferenceLoader extends AppCompatActivity {
 
-    WebView loader;
-    String URL = "";
+  private   WebView loader;
+   private String URL = "";
     private KProgressHUD hud;
+    private Boolean isShowingProgress = false;
+
 
 
 
@@ -67,6 +68,13 @@ public class WebReferenceLoader extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //set full screen mode
+        if(Objects.requireNonNull(getSupportActionBar()).isShowing()){
+
+            getSupportActionBar().hide();
+        }
 
         setContentView(R.layout.web_reference_layout);
         loader = findViewById(R.id.web_reference_main_webview);
@@ -122,15 +130,20 @@ public class WebReferenceLoader extends AppCompatActivity {
             @Override
             public void onProgressChanged(WebView view, int newProgress){
 
-                hud = KProgressHUD.create(WebReferenceLoader.this);
-                hud.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
-                hud.setLabel("Please wait...");
+                if(!isShowingProgress){
 
-             if (!hud.isShowing()){
+                    hud = new KProgressHUD(WebReferenceLoader.this);
+                    hud.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
+                    hud.setLabel("Loading Now...");
+                    hud.show();
 
-                 hud.show();
-             }
+                    isShowingProgress = true;
+                }
                 if(newProgress >= 95){
+
+
+
+                    isShowingProgress = false;
 
                     if(hud.isShowing()){
 

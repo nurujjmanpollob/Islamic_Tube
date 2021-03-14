@@ -20,9 +20,9 @@
 
 
 <resources>
-    <color name="colorPrimary">#009688</color>
-    <color name="colorPrimaryDark">#0E423D</color>
-    <color name="colorAccent">#0D433E</color>
+    <color name="colorPrimary">#282929</color>
+    <color name="colorPrimaryDark">#272727</color>
+    <color name="colorAccent">#3C3C3C</color>
 
     <color name="black_overlay">#66000000</color>
 </resources>

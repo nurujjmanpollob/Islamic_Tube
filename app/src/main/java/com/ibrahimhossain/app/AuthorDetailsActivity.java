@@ -94,45 +94,67 @@ public class AuthorDetailsActivity extends AppCompatActivity {
         if (database != null) {
             authorAddressView.setText(database.getAddress());
         }
-        //react on contact me button
-        Intent emailIntent;
-        if (database != null) {
-            emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+
+        messageMe.setOnClickListener(v -> {
+
+
+
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto",database.getEmail(), null));
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Hi, "+database.getName());
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "I have something to tell you :)");
-            startActivity(Intent.createChooser(emailIntent, "Send email..."));
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "Your profile is great and you having amazing collection! I personally went to meet you in a particular matter and this is...");
+            emailIntent.putExtra(Intent.EXTRA_STREAM, false);
+            if (emailIntent.resolveActivity(getPackageManager()) != null) {
 
-        }
+                startActivity(Intent.createChooser(emailIntent,"Choose your mail application"));
+
+            } else {
+
+                Toast.makeText(AuthorDetailsActivity.this,"No email App installed, install Gmail from Playstore First",Toast.LENGTH_LONG).show();
+            }
 
 
-        //react on whatsapp view
-        String contact = null; // use country code with your phone number
-        if (database != null) {
-            contact = database.getWhatsappNo();
-        }
-        String url = "https://api.whatsapp.com/send?phone=" + contact;
-        try {
-            PackageManager pm = AuthorDetailsActivity.this.getPackageManager();
-            pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES);
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
+
+        });
+
+
+
+        whatsappView.setOnClickListener(v -> {
+            //react on whatsapp view
+            String contact = null; // use country code with your phone number
+            if (database != null) {
+                contact = database.getWhatsappNo();
+            }
+            String url = "https://api.whatsapp.com/send?phone=" + contact;
+            try {
+                PackageManager pm = AuthorDetailsActivity.this.getPackageManager();
+                pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES);
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            } catch (PackageManager.NameNotFoundException e) {
+                Toast.makeText(AuthorDetailsActivity.this, "Whatsapp app not installed in your phone", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+
+        });
+
+
+        linkedInView.setOnClickListener(v -> {
+            //React on linkedIN view
+            Intent i = new Intent(AuthorDetailsActivity.this, WebReferenceLoader.class);
+            i.putExtra(Variables.WEB_REFERENCE_INTENT_KEY, database.getLinkedinID());
             startActivity(i);
-        } catch (PackageManager.NameNotFoundException e) {
-            Toast.makeText(this, "Whatsapp app not installed in your phone", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
 
+        });
 
-        //React on linkedIN view
-        Intent i = new Intent(this, WebReferenceLoader.class);
-        i.putExtra(Variables.WEB_REFERENCE_INTENT_KEY, database.getLinkedinID());
-        startActivity(i);
+        facebookView.setOnClickListener(v -> {
+            //React on Facebook View
+            Intent in = new Intent(AuthorDetailsActivity.this, WebReferenceLoader.class);
+            in.putExtra(Variables.WEB_REFERENCE_INTENT_KEY, database.getFacebooklink());
+            startActivity(in);
 
-        //React on Facebook View
-        Intent in = new Intent(this, WebReferenceLoader.class);
-        i.putExtra(Variables.WEB_REFERENCE_INTENT_KEY, database.getFacebooklink());
-        startActivity(in);
+        });
 
 
         //Author pic load

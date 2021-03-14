@@ -31,8 +31,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="170dp"
 		android:padding="10dp"
-		android:scaleType="fitXY"
-		android:src="@drawable/splash_screen_logo" />
+		android:scaleType="fitXY" />
 
 	<ScrollView
 		android:layout_width="wrap_content"

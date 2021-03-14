@@ -42,15 +42,12 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.ibrahimhossain.app.BackgroundWorker.InternetImageLoader;
 import com.ibrahimhossain.app.BackgroundWorker.IsValidYoutubeURL;
+import com.ibrahimhossain.app.BackgroundWorker.JSONParser;
 import com.ibrahimhossain.app.BackgroundWorker.WebRequestMaker;
 import com.ibrahimhossain.app.dialogview.CacheUriPerser;
 import com.ibrahimhossain.app.dialogview.NJPollobDialogLayout;
 import com.ibrahimhossain.app.dialogview.NJPollobDialogWorker;
 import com.kaopiz.kprogresshud.KProgressHUD;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -96,11 +93,21 @@ public class VideoDetails extends AppCompatActivity {
     ScrollView mainView;
 
 
-    //Get direct database
-    VideoDetailsDatabase videoDetailsDatabase;
+    //Get direct database in String format
+    String database;
 
     //Main play button
     ImageFilterView playButton;
+
+
+    //get video URL;
+    String videoURL;
+
+    //get website reference
+    String websiteReference;
+
+    //String author profile URL;
+    String authorProfileURL;
 
 
     //request mode
@@ -130,41 +137,102 @@ public class VideoDetails extends AppCompatActivity {
         //Check for intent data that passed from previous Activity
         if(getIntent().hasExtra(Variables.VIDEO_DETAILS_INTENT_KEY)){
 
-            //assign database url
-            videoDetailsDatabase = getIntent().getParcelableExtra(Variables.VIDEO_DETAILS_INTENT_KEY);
+            //get database
+           database = getIntent().getStringExtra(Variables.VIDEO_DETAILS_INTENT_KEY);
 
         }
 
-        //Setting values
-        if (videoDetailsDatabase != null) {
-            videoTitleView.setText(videoDetailsDatabase.getVideoTitle());
-        }
-        if (videoDetailsDatabase != null) {
-            videoDescriptionView.setText(videoDetailsDatabase.getVideoDescription());
-        }
-        if (videoDetailsDatabase != null) {
-            authorNameView.setText(videoDetailsDatabase.getAuthorName());
-        }
 
-        //Set thumbnail Image
-        if (videoDetailsDatabase != null) {
-            new InternetImageLoader(videoDetailsDatabase.getVideoThumbnail(), R.drawable.loading, R.drawable.error_404, thumbnailView, VideoDetails.this).runThread();
-        }
-
-        //Set Avatar Image and set
-        if (videoDetailsDatabase != null) {
-            new InternetImageLoader(videoDetailsDatabase.getAuthorAvatarURL(), 0,  R.drawable.error_404, authorAvatarView, VideoDetails.this).runThread();
-        }
+        //Parse current database
 
 
+        JSONParser.VideoDetailsParser videoDetailsParser = new JSONParser.VideoDetailsParser();
+        videoDetailsParser.ModeVideoDetailsDatabase(Variables.VIDEO_DETAILS_JSON_ROOT, database);
+        videoDetailsParser.setListenerForVideoDetailsDatabase(new JSONParser.VideoDetailsParser.VideoDetailsDatabaseListener() {
+            @Override
+            public void onNullValueOrInput() {
+
+
+            }
+
+            @Override
+            public void onArrayNotFound(String cause) {
+
+
+                NJPollobDialogLayout layout = new NJPollobDialogLayout(VideoDetails.this);
+                layout.setDialogDescription(cause);
+                layout.setCancelable(false);
+                layout.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+                    @Override
+                    public void onLeftButtonClick(View view) {
+
+                    }
+
+                    @Override
+                    public void onRightButtonClick(View view) {
+
+                        layout.dismiss();
+
+
+                    }
+                });
+
+                layout.show();
+
+
+
+            }
+
+            @Override
+            public void onSingleObjectNotFound(String cause) {
+
+                NJPollobDialogLayout layout = new NJPollobDialogLayout(VideoDetails.this);
+                layout.setDialogDescription(cause);
+                layout.setCancelable(false);
+                layout.setListenerOnDialogButtonClick(null, "Close", new NJPollobDialogLayout.DialogButtonClickListener() {
+                    @Override
+                    public void onLeftButtonClick(View view) {
+
+                    }
+
+                    @Override
+                    public void onRightButtonClick(View view) {
+
+                        layout.dismiss();
+
+
+                    }
+                });
+
+                layout.show();
+
+            }
+
+            @Override
+            public void onSuccessfulData(VideoDetailsDatabase videoDetailsDatabase) {
+
+                videoTitleView.setText(videoDetailsDatabase.getVideoTitle());
+                videoDescriptionView.setText(videoDetailsDatabase.getVideoDescription());
+                authorNameView.setText(videoDetailsDatabase.getAuthorName());
+                new InternetImageLoader(videoDetailsDatabase.getVideoThumbnail(), R.drawable.loading, R.drawable.error_404, thumbnailView, VideoDetails.this).runThread();
+
+                new InternetImageLoader(videoDetailsDatabase.getAuthorAvatarURL(), 0,  R.drawable.error_404, authorAvatarView, VideoDetails.this).runThread();
+
+                videoURL = videoDetailsDatabase.getVideoURL();
+                websiteReference = videoDetailsDatabase.getVideoReferenceWebsite();
+                authorProfileURL = videoDetailsDatabase.getAuthorProfileURL();
+            }
+        });
+
+        videoDetailsParser.parseVideoDatabaseForResult();
 
 
         //React on websiteView
         websiteView.setOnClickListener(v -> {
             try {
-                if (URLUtil.isValidUrl(videoDetailsDatabase.getVideoReferenceWebsite())) {
+                if (URLUtil.isValidUrl(websiteReference)) {
                     Intent i = new Intent(VideoDetails.this, WebReferenceLoader.class);
-                    i.putExtra(Variables.WEB_REFERENCE_INTENT_KEY, videoDetailsDatabase.getVideoReferenceWebsite());
+                    i.putExtra(Variables.WEB_REFERENCE_INTENT_KEY, websiteReference);
                     startActivity(i);
                 }else {
 
@@ -204,9 +272,12 @@ public class VideoDetails extends AppCompatActivity {
         shareButton.setOnClickListener(v -> {
             try{
 
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.parse(videoDetailsDatabase.getVideoURL()), "video/*");
-                startActivity(intent);
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, videoURL);
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "URL");
+
+                startActivity(Intent.createChooser(shareIntent, "Share with your friends"));
 
 
             }catch (Exception ess){
@@ -220,7 +291,7 @@ public class VideoDetails extends AppCompatActivity {
         playButton.setOnClickListener(v -> {
 
 
-            IsValidYoutubeURL videoURLS = new IsValidYoutubeURL(videoDetailsDatabase.getVideoURL());
+            IsValidYoutubeURL videoURLS = new IsValidYoutubeURL(videoURL);
             videoURLS.setListenerForURLEvent(new IsValidYoutubeURL.ListenerOnURLEvent() {
                 @Override
                 public void invalidURL() {
@@ -268,7 +339,7 @@ public class VideoDetails extends AppCompatActivity {
         //React on Author avatar view
         authorAvatarView.setOnClickListener(v -> {
 
-            WebRequestMaker requestMaker = new WebRequestMaker(videoDetailsDatabase.getAuthorProfileURL());
+            WebRequestMaker requestMaker = new WebRequestMaker(authorProfileURL);
             requestMaker.setEventListener(new WebRequestMaker.WebRequestEvent() {
 
                 KProgressHUD kProgressHUD;
@@ -372,6 +443,8 @@ public class VideoDetails extends AppCompatActivity {
 
                 }
             });
+
+            requestMaker.runThread();
 
         });
 
