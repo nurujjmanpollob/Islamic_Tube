@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "927116954568",
+    "project_id": "orvid-70118",
+    "storage_bucket": "orvid-70118.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:927116954568:android:498ae2ba35804828120efd",
+        "android_client_info": {
+          "package_name": "com.ibrahimhossain.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "927116954568-lnhuh0tpvjs32cffrtnfrnfg758v39op.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-jfk1Lax1Lkpr4DtK5pdTLbg7a7HSCbI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "927116954568-lnhuh0tpvjs32cffrtnfrnfg758v39op.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

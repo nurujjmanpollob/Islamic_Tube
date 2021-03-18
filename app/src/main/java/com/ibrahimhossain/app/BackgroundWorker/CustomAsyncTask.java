@@ -36,8 +36,7 @@ public abstract class CustomAsyncTask<Progress, Result> {
 
 
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    @MainThread
+
     public void runThread(){
 
         preExecute();
@@ -76,7 +75,6 @@ public abstract class CustomAsyncTask<Progress, Result> {
 
         exc.shutdown();
 
-
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
@@ -91,7 +89,6 @@ public abstract class CustomAsyncTask<Progress, Result> {
 
         exc.shutdown();
 
-
     }
 
 
@@ -104,13 +101,20 @@ public abstract class CustomAsyncTask<Progress, Result> {
     }
 
 
+    @SafeVarargs
+    private final void publishProgresssInternal(Progress... prg){
+
+        onProgressUpdated(prg);
+    }
+
+
 
     @SuppressWarnings({"UnusedDeclaration"})
     @SafeVarargs
-    @MainThread
+    @WorkerThread
     protected final void publishProgress(Progress... values) {
 
-        onProgressUpdated(values);
+       publishProgresssInternal(values);
     }
 
 

@@ -33,19 +33,23 @@ public class ThreadFixer
 
         this.handler = handler;
 
+        Runnable runnable = () -> {
+            try{
 
-        handler.post(() -> {
-            if(fixer != null){
+                fixer.onSuccessFullFix();
+            }catch (Exception ess){
 
                 try {
-                    fixer.onSuccessFullFix();
-                } catch (IOException e) {
+                    throw new Exception(ess.toString());
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        });
+        };
 
+        handler.post(runnable);
 
+        handler.removeCallbacks(runnable);
 
 
     }

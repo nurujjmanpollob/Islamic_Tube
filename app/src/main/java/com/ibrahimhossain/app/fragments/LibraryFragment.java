@@ -18,7 +18,10 @@
 
 package com.ibrahimhossain.app.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +29,46 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.ibrahimhossain.app.FavVideoDataReader;
+import com.ibrahimhossain.app.FavoriteVideoAdapter;
+import com.ibrahimhossain.app.FavoriteVideoDatabase;
 import com.ibrahimhossain.app.R;
+
+import java.util.List;
 
 public class LibraryFragment extends Fragment {
 
+   RecyclerView recyclerView;
+
+    Handler handler;
+    Runnable runnable;
+
+  FavoriteVideoAdapter favoriteVideoAdapter;
+
+
+    Context context;
+
+    View errorView;
+
+
+
+
+    public LibraryFragment(Context context){
+        this.context = context;
+
+
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
+
+
+        // get database
+
         super.onCreate(savedInstanceState);
     }
 
@@ -40,6 +76,63 @@ public class LibraryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.library_fragment, container, false);
+        View rootView = inflater.inflate(R.layout.library_fragment, container, false);
+
+        recyclerView = rootView.findViewById(R.id.favorite_video_list_recycler_view);
+
+        errorView = rootView.findViewById(R.id.favorite_video_error_text_view);
+
+
+
+        FavVideoDataReader reader = new FavVideoDataReader(context);
+        reader.setEvent(new FavVideoDataReader.OnFavVideoDataLoadEvent() {
+            @Override
+            public void onHasDatabase(List<FavoriteVideoDatabase> databaseList) {
+
+
+                if(databaseList != null) {
+
+                    new Handler(Looper.getMainLooper()).post(() -> {
+
+                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                        favoriteVideoAdapter = new FavoriteVideoAdapter(context, databaseList, errorView);
+                        recyclerView.setAdapter(favoriteVideoAdapter);
+
+                    });
+                }else {
+
+                    new Handler(Looper.getMainLooper()).post(() -> errorView.setVisibility(View.VISIBLE));
+                }
+
+
+
+
+
+            }
+
+            @Override
+            public void onNullDatabase() {
+
+
+                new Handler(Looper.getMainLooper()).post(() -> errorView.setVisibility(View.VISIBLE));
+
+
+            }
+        });
+
+        reader.runThread();
+
+
+
+
+
+
+        return rootView;
     }
+
+
+
+
+
+
 }

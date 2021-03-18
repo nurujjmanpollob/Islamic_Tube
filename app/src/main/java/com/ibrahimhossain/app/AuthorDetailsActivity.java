@@ -32,8 +32,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.textview.MaterialTextView;
-import com.ibrahimhossain.app.BackgroundWorker.InternetImageLoader;
 
 import java.util.Objects;
 
@@ -157,8 +157,7 @@ public class AuthorDetailsActivity extends AppCompatActivity {
         });
 
 
-        //Author pic load
-        new InternetImageLoader(database.getAvatarURL(), 0, R.drawable.error_404, authorPic, AuthorDetailsActivity.this).runThread();
+        Glide.with(AuthorDetailsActivity.this).asBitmap().placeholder(R.drawable.loading_placeholder).load(database.getAvatarURL()).into(authorPic);
 
         super.onCreate(savedInstanceState);
     }

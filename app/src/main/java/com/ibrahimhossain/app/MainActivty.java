@@ -20,31 +20,41 @@
 package com.ibrahimhossain.app;
 
 
-
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PersistableBundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ibrahimhossain.app.fragments.LibraryFragment;
 import com.ibrahimhossain.app.fragments.SubscriptionFragment;
 import com.ibrahimhossain.app.fragments.VideoFragment;
-import com.kaopiz.kprogresshud.KProgressHUD;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import abhishekti7.unicorn.filepicker.UnicornFilePicker;
+import abhishekti7.unicorn.filepicker.utils.Constants;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivty extends AppCompatActivity {
@@ -71,6 +81,14 @@ public class MainActivty extends AppCompatActivity {
 
     //save video fragment state(Visibity) in boolean
     Boolean isVideoFragmentVisible = true;
+
+
+    private final int REQUEST_CODE_PERMISSIONS = 101;
+    private final String[] REQUIRED_PERMISSIONS = new String[]{
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.READ_EXTERNAL_STORAGE",
+    };
+
 
 
 
@@ -108,16 +126,22 @@ public class MainActivty extends AppCompatActivity {
         loadFragment(videoFragment);
 
 
-        //Set Layout manager
-      //  recyclerView.setLayoutManager(new LinearLayoutManager(MainActivty.this));
+        //Check if user have set their profile picture
+        SharedPreferences preferences = MainActivty.this.getSharedPreferences(Variables.USER_IMAGE_URI_PREF, Context.MODE_PRIVATE);
+        String imgDir = preferences.getString(Variables.USER_IMAGE_DIRECTORY, null);
+        if(imgDir != null){
+
+            profileImageView.setImageURI(Uri.fromFile(new File(imgDir)));
+
+        }
 
 
-        //Call new instance of video adapter
-    //   adapter  = new VideoAdapter(MainActivty.this, input);
+        closeKeyboard();
 
-        //set recyclerview adapter
-      //  recyclerView.setAdapter(adapter);
+        if(!allPermissionsGranted()){
 
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+        }
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -127,10 +151,11 @@ public class MainActivty extends AppCompatActivity {
 
                     videoFragment.updateLayout(query);
 
+
+
                 }
-              //  filter(query);
 
-
+                closeKeyboard();
 
                 return false;
             }
@@ -138,47 +163,57 @@ public class MainActivty extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
 
-             //   filter(newText);
                 return false;
             }
         });
 
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
 
-                if(item.getItemId() == R.id.home_activity){
+            if(item.getItemId() == R.id.home_activity){
 
-                  if(!isVideoFragmentVisible) {
-                      loadFragment(new VideoFragment(MainActivty.this, input));
-                  }
+              if(!isVideoFragmentVisible) {
+                  loadFragment(new VideoFragment(MainActivty.this, input));
+              }
 
-                    isVideoFragmentVisible = true;
+                isVideoFragmentVisible = true;
 
-                }
+            }
 
-                if(item.getItemId() == R.id.library_activity){
+            if(item.getItemId() == R.id.library_activity){
 
-                    isVideoFragmentVisible = false;
+                isVideoFragmentVisible = false;
 
-                        loadFragment(new LibraryFragment());
+                    loadFragment(new LibraryFragment(MainActivty.this));
 
-                }
+            }
 
-                if(item.getItemId() == R.id.subscription_activity){
+            if(item.getItemId() == R.id.subscription_activity){
 
-                    isVideoFragmentVisible = false;
+                isVideoFragmentVisible = false;
 
-                        loadFragment(new SubscriptionFragment());
+                    loadFragment(new SubscriptionFragment(MainActivty.this));
 
-                    return true;
-                }
                 return true;
             }
+            return true;
         });
 
 
+        profileImageView.setOnClickListener(v -> {
+
+            UnicornFilePicker.from(MainActivty.this)
+                    .addConfigBuilder()
+                    .selectMultipleFiles(false)
+                    .setRootDirectory(Environment.getExternalStorageDirectory().getAbsolutePath())
+                    .showHiddenFiles(false)
+                    .setFilters(new String[]{"png", "jpg", "jpeg"})
+                    .addItemDivider(true)
+                    .theme(R.style.UnicornFilePicker_Default)
+                    .build()
+                    .forResult(Constants.REQ_UNICORN_FILE);
+
+        });
 
 
 
@@ -203,12 +238,60 @@ public class MainActivty extends AppCompatActivity {
 
     public void loadFragment(Fragment fragment) {
 
-        if(!fragment.isAdded()) {
+
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.main_fragment_holder, fragment);
+            transaction.replace(R.id.main_fragment_holder, fragment);
             transaction.commit();
 
+
         }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if(requestCode == Constants.REQ_UNICORN_FILE && resultCode == RESULT_OK){
+
+            //get uri
+            if (data != null ) {
+
+                ArrayList<String> files = data.getStringArrayListExtra("filePaths");
+                String imageDIR = null;
+                if (files != null) {
+                    imageDIR = files.get(0);
+                }
+
+                SharedPreferences preferences = MainActivty.this.getSharedPreferences(Variables.USER_IMAGE_URI_PREF, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(Variables.USER_IMAGE_DIRECTORY, imageDIR);
+                editor.apply();
+
+                if (imageDIR != null) {
+                    profileImageView.setImageURI(Uri.fromFile(new File(imageDIR)));
+                }
+            }
         }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+
+    private boolean allPermissionsGranted() {
+        for (String permission : REQUIRED_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(MainActivty.this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    private void closeKeyboard() {
+
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+    }
 
 }

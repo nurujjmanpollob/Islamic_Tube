@@ -19,15 +19,15 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Home"
+    <item android:title="@string/home"
         android:icon="@drawable/ic_baseline_home_24"
         android:id="@+id/home_activity"/>
 
-    <item android:title="Library"
+    <item android:title="@string/collection"
         android:icon="@drawable/ic_baseline_video_library_24"
         android:id="@+id/library_activity"/>
 
-    <item android:title="Subscription"
+    <item android:title="@string/downloads"
         android:icon="@drawable/ic_baseline_subscriptions_24"
         android:id="@+id/subscription_activity"/>
 

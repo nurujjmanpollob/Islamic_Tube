@@ -77,7 +77,6 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/video_details_profile_image"
                     android:layout_width="40dp"
-                    android:src="@drawable/ic_baseline_perm_identity_24"
                     android:layout_height="40dp"
                     android:layout_centerVertical="true"
                     app:civ_border_color="#FF000000"
@@ -94,18 +93,6 @@
                     android:textColor="#F5F8F8"
                     android:textSize="20sp" />
 
-
-                <androidx.constraintlayout.utils.widget.ImageFilterView
-                    android:id="@+id/video_details_browse"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="@dimen/paddingTop"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="32dp"
-                    android:layout_toStartOf="@id/video_details_share"
-                    android:src="@drawable/ic_baseline_internet_40" />
-
                 <androidx.constraintlayout.utils.widget.ImageFilterView
                     android:id="@+id/video_details_share"
                     android:layout_width="24dp"
@@ -113,6 +100,33 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_baseline_share_40" />
+
+                <androidx.constraintlayout.utils.widget.ImageFilterView
+                    android:id="@+id/video_details_browse"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="@dimen/paddingTop"
+                    android:layout_marginEnd="63dp"
+                    android:layout_toStartOf="@id/video_details_bookmarked_video"
+                    android:src="@drawable/ic_baseline_internet_40" />
+
+                <androidx.constraintlayout.utils.widget.ImageFilterView
+                    android:id="@+id/video_details_bookmarked_video"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="@dimen/paddingTop"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="32dp"
+                    android:layout_toStartOf="@id/video_details_share"
+                    android:src="@drawable/ic_baseline_no_bookmark" />
+
+
+
+
+
 
 
 

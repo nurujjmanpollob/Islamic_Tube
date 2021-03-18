@@ -16,7 +16,8 @@
   ~   limitations under the License.
   ~
   -->
-<androidx.constraintlayout.widget.ConstraintLayout
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -24,19 +25,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="57dp"
-        android:layout_marginEnd="58dp"
-        android:fontFamily="@font/baloo"
-        android:text="This library section will be soon coming..."
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+   <androidx.recyclerview.widget.RecyclerView
+       android:layout_width="match_parent"
+       android:layout_margin="@dimen/paddingTop"
+       android:layout_height="match_parent"
+       android:id="@+id/favorite_video_list_recycler_view"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+   <include
+       android:id="@+id/favorite_video_error_text_view"
+       layout="@layout/error_view"
+       android:layout_width="wrap_content"
+
+       android:layout_height="wrap_content"
+
+       android:layout_gravity="center_horizontal|center"
+       android:visibility="gone" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

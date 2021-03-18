@@ -22,10 +22,13 @@ package com.ibrahimhossain.app.dialogview;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 
@@ -53,6 +56,8 @@ public class NJPollobDialogLayout extends Dialog
 	boolean cachePolicy = false;
 
 	Boolean isDismiss = false;
+
+	Bitmap imageBitmap = null;
 
 
 	public NJPollobDialogLayout(Context context){
@@ -84,6 +89,12 @@ public class NJPollobDialogLayout extends Dialog
 		if(thumbnailResourceID > 0){
 
 			ImgSrcView.setImageResource(thumbnailResourceID);
+		}
+
+
+		if(imageBitmap != null){
+
+			ImgSrcView.setImageBitmap(imageBitmap);
 		}
 
 		if(thumbnailURL != null){
@@ -212,6 +223,16 @@ public class NJPollobDialogLayout extends Dialog
 		dismiss();
 	}
 
+	public void setThumbnailByBitmap(Bitmap bitmap){
+
+		this.imageBitmap = bitmap;
+	}
+
+
+	public ImageView getThumbnailView(){
+
+		return ImgSrcView;
+	}
 
 
 }

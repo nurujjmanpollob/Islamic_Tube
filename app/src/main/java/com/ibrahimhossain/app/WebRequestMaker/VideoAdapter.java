@@ -21,8 +21,6 @@ package com.ibrahimhossain.app.WebRequestMaker;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,21 +32,16 @@ import androidx.constraintlayout.utils.widget.ImageFilterView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.textview.MaterialTextView;
-import com.ibrahimhossain.app.BackgroundWorker.InternetImageLoader;
-import com.ibrahimhossain.app.BackgroundWorker.JSONParser;
 import com.ibrahimhossain.app.BackgroundWorker.WebRequestMaker;
-import com.ibrahimhossain.app.FullscreenActivity;
-import com.ibrahimhossain.app.MainActivty;
 import com.ibrahimhossain.app.R;
 import com.ibrahimhossain.app.Variables;
 import com.ibrahimhossain.app.VideoData;
 import com.ibrahimhossain.app.VideoDetails;
-import com.ibrahimhossain.app.VideoDetailsDatabase;
 import com.ibrahimhossain.app.dialogview.NJPollobDialogLayout;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -88,7 +81,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapter
     public void onBindViewHolder(@NonNull VideoAdapterView holder, int position) {
 
 
-        new InternetImageLoader(videoData.get(position).getThumbnailURL(), R.drawable.loading, R.drawable.error_404, holder.thumbnailView, applicationContext).runThread();
+        Glide.with(applicationContext).asBitmap().placeholder(R.drawable.loading_placeholder).load(videoData.get(position).getThumbnailURL()).into(holder.thumbnailView);
 
         //set title
         holder.videoTitleView.setText(videoData.get(position).getTitle());
@@ -134,6 +127,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapter
 
                     Intent i = new Intent(applicationContext, VideoDetails.class);
                     i.putExtra(Variables.VIDEO_DETAILS_INTENT_KEY, result);
+                    i.putExtra(Variables.VIDEO_DETAILS_URL_RAW_KEY, videoData.get(position).getVideoURL());
                     applicationContext.startActivity(i);
 
 
@@ -175,13 +169,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapter
 
             requestMaker.runThread();
 
-            /*
-
-            Intent i = new Intent(applicationContext, VideoDetails.class);
-            i.putExtra(Variables.VIDEO_DETAILS_INTENT_KEY, videoData.get(position).getVideoURL());
-            applicationContext.startActivity(i);
-
-             */
 
         });
 
@@ -194,7 +181,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoAdapter
 
     @Override
     public int getItemCount() {
-        return videoData.size();
+
+        if(videoData.size() != 0){
+            return videoData.size();
+        }else {
+
+            return 0;
+        }
+
     }
 
      static class VideoAdapterView extends RecyclerView.ViewHolder {

@@ -45,7 +45,6 @@ public class HTMLThemeColorGetter
         urlOfHTML = remoteHTMLURL;
 
         SyncTask sy = new SyncTask();
-        sy.defineThreadCount(4);
         sy.runThread();
 
 

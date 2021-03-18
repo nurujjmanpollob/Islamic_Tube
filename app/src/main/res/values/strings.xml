@@ -20,7 +20,7 @@
 
 
 
-    <string name="app_name">Islamic Tube</string>
+    <string name="app_name">Orvid</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="this_is_dummy_textview_domenstrating_building_custom_dialog_layout">This is dummy TextView domenstrating building custom dialog layout</string>
@@ -30,4 +30,7 @@
     <string name="no_database">It is appears that no database has been added</string>
     <string name="error_player">Youtube Player Error</string>
     <string name="contact_me">Contact ME</string>
+    <string name="home">Home</string>
+    <string name="collection">Collection</string>
+    <string name="downloads">Blog</string>
 </resources>

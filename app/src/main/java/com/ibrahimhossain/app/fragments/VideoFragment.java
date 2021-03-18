@@ -52,6 +52,11 @@ public class VideoFragment extends Fragment {
 
     }
 
+    public VideoFragment(){
+
+
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
 

@@ -122,6 +122,29 @@ public class Variables {
     public static String AUTHOR_PROFILE_INTENT_KEY = "authorintentkey";
 
 
+    //Favorite video list shared preference
+    public static String FAVORITE_VIDEO_DATASHEET_NAME = "my_favorite_video";
+
+    //Fav video title
+    public static String FAVORITE_VIDEO_TITLE = "ttl";
+
+    //Fav video link
+    public static String FAVORITE_VIDEO_URL = "url";
+
+    //pass video data url
+    public static String VIDEO_DETAILS_URL_RAW_KEY = "rwkey";
+
+    //Firebase Notification Key
+    public static String FIREBASE_NOTIFICATION_KEY_URL = "url";
+
+    //User profile image preference
+    public static String USER_IMAGE_URI_PREF = "user_profile_image_pref";
+
+    //User profile image dir
+    public static String USER_IMAGE_DIRECTORY = "img";
+
+
+
 
 
     //Youtube Player Developer Key

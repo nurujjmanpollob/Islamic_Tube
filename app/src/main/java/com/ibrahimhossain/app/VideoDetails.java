@@ -19,12 +19,11 @@
 
 package com.ibrahimhossain.app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.PersistableBundle;
 import android.view.View;
 import android.webkit.URLUtil;
@@ -36,18 +35,20 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.circularreveal.CircularRevealRelativeLayout;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
-import com.ibrahimhossain.app.BackgroundWorker.InternetImageLoader;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ibrahimhossain.app.BackgroundWorker.IsValidYoutubeURL;
 import com.ibrahimhossain.app.BackgroundWorker.JSONParser;
 import com.ibrahimhossain.app.BackgroundWorker.WebRequestMaker;
-import com.ibrahimhossain.app.dialogview.CacheUriPerser;
 import com.ibrahimhossain.app.dialogview.NJPollobDialogLayout;
-import com.ibrahimhossain.app.dialogview.NJPollobDialogWorker;
 import com.kaopiz.kprogresshud.KProgressHUD;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -109,6 +110,16 @@ public class VideoDetails extends AppCompatActivity {
     //String author profile URL;
     String authorProfileURL;
 
+    //Favorite video button;
+    ImageFilterView favVideoButton;
+
+
+    //get video title
+    String videoTitle;
+
+
+    String videoDetailsURL;
+
 
     //request mode
 
@@ -133,12 +144,14 @@ public class VideoDetails extends AppCompatActivity {
         errorView = findViewById(R.id.video_details_main_error_view);
         mainView = findViewById(R.id.video_details_view_main_root_scrollview);
         playButton = findViewById(R.id.video_details_main_play_view);
+        favVideoButton = findViewById(R.id.video_details_bookmarked_video);
 
         //Check for intent data that passed from previous Activity
-        if(getIntent().hasExtra(Variables.VIDEO_DETAILS_INTENT_KEY)){
+        if(getIntent().hasExtra(Variables.VIDEO_DETAILS_INTENT_KEY) && getIntent().hasExtra(Variables.VIDEO_DETAILS_URL_RAW_KEY)){
 
             //get database
            database = getIntent().getStringExtra(Variables.VIDEO_DETAILS_INTENT_KEY);
+           videoDetailsURL = getIntent().getStringExtra(Variables.VIDEO_DETAILS_URL_RAW_KEY);
 
         }
 
@@ -214,12 +227,14 @@ public class VideoDetails extends AppCompatActivity {
                 videoTitleView.setText(videoDetailsDatabase.getVideoTitle());
                 videoDescriptionView.setText(videoDetailsDatabase.getVideoDescription());
                 authorNameView.setText(videoDetailsDatabase.getAuthorName());
-                new InternetImageLoader(videoDetailsDatabase.getVideoThumbnail(), R.drawable.loading, R.drawable.error_404, thumbnailView, VideoDetails.this).runThread();
 
-                new InternetImageLoader(videoDetailsDatabase.getAuthorAvatarURL(), 0,  R.drawable.error_404, authorAvatarView, VideoDetails.this).runThread();
+                Glide.with(VideoDetails.this).asBitmap().placeholder(R.drawable.loading_placeholder).load(videoDetailsDatabase.getVideoThumbnail()).into(thumbnailView);
+
+                Glide.with(VideoDetails.this).asBitmap().placeholder(R.drawable.loading_placeholder).load(videoDetailsDatabase.getAuthorAvatarURL()).into(authorAvatarView);
 
                 videoURL = videoDetailsDatabase.getVideoURL();
                 websiteReference = videoDetailsDatabase.getVideoReferenceWebsite();
+                videoTitle = videoDetailsDatabase.getVideoTitle();
                 authorProfileURL = videoDetailsDatabase.getAuthorProfileURL();
             }
         });
@@ -445,6 +460,108 @@ public class VideoDetails extends AppCompatActivity {
             });
 
             requestMaker.runThread();
+
+        });
+
+
+
+        // Check if current video is in favorite video list
+        SharedPreferences sharedPreferences = getSharedPreferences(Variables.FAVORITE_VIDEO_DATASHEET_NAME, Context.MODE_PRIVATE);
+        String links = sharedPreferences.getString(Variables.FAVORITE_VIDEO_URL, null);
+
+        //check for database entry
+        if(links != null){
+
+            //create instance of Gson
+            Gson gson = new Gson();
+
+            List<String> videoList = gson.fromJson(links, new TypeToken<List<String>>() {
+            }.getType());
+
+            //check if current video is exists in videoList or not
+            if(videoList.contains(videoDetailsURL)){
+                favVideoButton.setImageResource(R.drawable.ic_baseline_bookmarked);
+            }else {
+
+                favVideoButton.setImageResource(R.drawable.ic_baseline_no_bookmark);
+            }
+
+
+
+        }else {
+
+            favVideoButton.setImageResource(R.drawable.ic_baseline_no_bookmark);
+        }
+
+
+        //Favorite video button view
+        favVideoButton.setOnClickListener(v -> {
+
+
+            SharedPreferences sharedPreferences1 = getSharedPreferences(Variables.FAVORITE_VIDEO_DATASHEET_NAME, Context.MODE_PRIVATE);
+            String jsonLink = sharedPreferences1.getString(Variables.FAVORITE_VIDEO_URL, null);
+            String jsonTitle = sharedPreferences1.getString(Variables.FAVORITE_VIDEO_TITLE, null);
+
+
+            if (jsonLink != null && jsonTitle != null) {
+
+                Gson gson = new Gson();
+                List<String> linkList = gson.fromJson(jsonLink, new TypeToken<List<String>>() {
+                }.getType());
+
+                List<String> titleList = gson.fromJson(jsonTitle, new TypeToken<List<String>>() {
+                }.getType());
+
+                if (linkList.contains(videoDetailsURL)) {
+
+                    linkList.remove(videoDetailsURL);
+                    titleList.remove(videoTitle);
+
+                    SharedPreferences.Editor editor = sharedPreferences1.edit();
+
+                    editor.putString(Variables.FAVORITE_VIDEO_URL, new Gson().toJson(linkList));
+                    editor.putString(Variables.FAVORITE_VIDEO_TITLE, new Gson().toJson(titleList));
+
+
+                    editor.apply();
+
+                    favVideoButton.setImageResource(R.drawable.ic_baseline_no_bookmark);
+
+                    Toast.makeText(VideoDetails.this, "Bookmark Removed", Toast.LENGTH_SHORT).show();
+
+
+                } else {
+                    linkList.add(videoDetailsURL);
+                    titleList.add(videoTitle);
+                    SharedPreferences.Editor editor = sharedPreferences1.edit();
+                    editor.putString(Variables.FAVORITE_VIDEO_URL, new Gson().toJson(linkList));
+                    editor.putString(Variables.FAVORITE_VIDEO_TITLE, new Gson().toJson(titleList));
+                    editor.apply();
+
+                    Toast.makeText(VideoDetails.this, "Bookmarked", Toast.LENGTH_SHORT).show();
+
+                    favVideoButton.setImageResource(R.drawable.ic_baseline_bookmarked);
+
+                }
+            } else {
+
+                List<String> linkList = new ArrayList<>();
+                List<String> titleList = new ArrayList<>();
+                linkList.add(videoDetailsURL);
+                titleList.add(videoTitle);
+                SharedPreferences.Editor editor = sharedPreferences1.edit();
+                editor.putString(Variables.FAVORITE_VIDEO_URL, new Gson().toJson(linkList));
+                editor.putString(Variables.FAVORITE_VIDEO_TITLE, new Gson().toJson(titleList));
+                editor.apply();
+
+                favVideoButton.setImageResource(R.drawable.ic_baseline_bookmarked);
+
+                Toast.makeText(VideoDetails.this, "Bookmarked", Toast.LENGTH_SHORT).show();
+            }
+
+
+
+
 
         });
 
